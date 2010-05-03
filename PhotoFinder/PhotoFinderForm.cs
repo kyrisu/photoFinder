@@ -50,7 +50,7 @@ namespace PhotoFinder
                 }
                 catch (System.IO.FileNotFoundException)
                 {
-                    MessageBox.Show("File was not found!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("File was not found!!!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
 
                 tpImgSearch.BackgroundImage = _QueryBitmap;
