@@ -16,10 +16,23 @@ namespace PhotoFinder
         public static bool IsImage(this FileInfo fi)
         {
             // add other possible extensions here
-            return Path.GetExtension(fi.Extension).Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
+            if (!(Path.GetExtension(fi.Extension).Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase);
+                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase)))
+                return false;
+
+            try
+            {
+                Image testImage = Image.FromFile(fi.FullName);
+            }
+            // when image is corrupted, invalid Image.FromImage() throws OutOfMemoryException - odd but true :)
+            catch (OutOfMemoryException)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

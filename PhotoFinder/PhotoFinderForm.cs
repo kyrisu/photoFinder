@@ -23,19 +23,30 @@ namespace PhotoFinder
         {
             InitializeComponent();
 
-            
+
         }
 
         private void PopulateGallery(string path)
         {
-            foreach (var file in (new DirectoryInfo(path)).GetFiles())
+            try
             {
-                if (file.IsImage())
+                foreach (var folder in (new DirectoryInfo(path)).GetDirectories())
                 {
-                    Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
-                    ilvi.FileName = file.FullName;
-                    ilvGallery.Items.Add(ilvi);
+                    PopulateGallery(folder.FullName);
                 }
+                foreach (var file in (new DirectoryInfo(path)).GetFiles())
+                {
+                    if (file.IsImage())
+                    {
+                        Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
+                        ilvi.FileName = file.FullName;
+                        ilvGallery.Items.Add(ilvi);
+                    }
+                }
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // so what ... go go go!!! :P
             }
         }
 
@@ -46,7 +57,7 @@ namespace PhotoFinder
             {
                 try
                 {
-                    _QueryBitmap = new Bitmap(ofDialog.FileName);
+                    _QueryBitmap = (Bitmap)Image.FromFile(ofDialog.FileName);
                 }
                 catch (System.IO.FileNotFoundException)
                 {
@@ -66,69 +77,113 @@ namespace PhotoFinder
                 MessageBox.Show("No query defined!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-           
-            SearchInFolder(CalculateSCDHistogram(_QueryBitmap));
+
+            //check which descriptors are checked
+            Descriptor desc = Descriptor.NONE;
+            desc |= (clbDescriptorsList.GetItemChecked(0) ? Descriptor.SCD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(1) ? Descriptor.CLD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(2) ? Descriptor.DCD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(3) ? Descriptor.EHD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(4) ? Descriptor.CEDD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(5) ? Descriptor.FCTH : Descriptor.NONE);
+
+            ilvGallery.Items.Clear();
+            if (desc == Descriptor.NONE)
+                MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else
+                SearchInFolder(_SourceFolderPath, DescriptorTools.CalculateSCDHistogram(_QueryBitmap), desc);
 
         }
 
         /// <summary>
         /// Searches in specifide in _SourceFolderPath directory based on SCD
         /// </summary>
+        /// <param name="path"></param>
         /// <param name="query">SCD descriptor from the query image as doublep[]</param>
-        private void SearchInFolder(double[] query)
+        private void SearchInFolder(string path, double[] query, Descriptor desc)
         {
-            ilvGallery.Items.Clear();
-            if (!String.IsNullOrEmpty(_SourceFolderPath))
+
+            if (!String.IsNullOrEmpty(path))
             {
-                foreach (var file in (new DirectoryInfo(_SourceFolderPath)).GetFiles())
+                try
                 {
-                    if (file.IsImage())
+                    foreach (var folder in (new DirectoryInfo(path)).GetDirectories())
                     {
-                        double distance = CalculateSCDDistance(query, CalculateSCDHistogram(file));
-                        if(distance >= 0)
+                        SearchInFolder(folder.FullName, query, desc);
+                    }
+                    foreach (var file in (new DirectoryInfo(path)).GetFiles())
+                    {
+                        if (file.IsImage())
                         {
-                            Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
-                            ilvi.FileName = file.FullName;
-                            ilvi.Text = distance.ToString();
-                            ilvGallery.Items.Add(ilvi);
+                            Gallery.ImageListViewItem ilvi = null;
+
+                            if ((desc & Descriptor.SCD) == Descriptor.SCD)
+                            {
+                                double distance = DescriptorTools.CalculateSCDDistance(query, DescriptorTools.CalculateSCDHistogram(file));
+                                if (distance >= 0)
+                                {
+                                    GalleryEntryBuilder(file, ref ilvi, "SCD diff: " + distance.ToString());
+                                }
+                            }
+
+                            if ((desc & Descriptor.CLD) == Descriptor.CLD)
+                            {
+                                throw new NotImplementedException();
+                            }
+
+                            if ((desc & Descriptor.DCD) == Descriptor.DCD)
+                            {
+                                throw new NotImplementedException();
+                            }
+
+                            if ((desc & Descriptor.EHD) == Descriptor.EHD)
+                            {
+                                throw new NotImplementedException();
+                            }
+
+                            if ((desc & Descriptor.FCTH) == Descriptor.FCTH)
+                            {
+                                throw new NotImplementedException();
+                            }
+
+                            if ((desc & Descriptor.CEDD) == Descriptor.CEDD)
+                            {
+                                // my implementation of CEDD goes here :D
+                                throw new NotImplementedException();
+                            }
+
+                            // after all descriptors touched the file it goes to the gallery
+                            if (ilvi != null) ilvGallery.Items.Add(ilvi);
                         }
                     }
                 }
+                catch (UnauthorizedAccessException)
+                {
+                    // again.. so what.. go go go!
+                }
             }
-            ilvGallery.Items.OrderBy(i => i.Text);
-            ilvGallery.Refresh();
+
         }
 
-        private double[] CalculateSCDHistogram(FileInfo image)
+        /// <summary>
+        /// Builds or modifies image to be added to the gallery.
+        /// </summary>
+        /// <param name="file">File to be added</param>
+        /// <param name="ilvi"></param>
+        /// <param name="caption">Text to put in the image description</param>
+        private static void GalleryEntryBuilder(FileInfo file, ref Gallery.ImageListViewItem ilvi, string caption)
         {
-            Bitmap bitmap = new Bitmap(image.FullName);
-            return CalculateSCDHistogram(bitmap);
-        }
-
-        private double[] CalculateSCDHistogram(Bitmap bitmap)
-        {
-            SCD_Descriptor SCD = new SCD_Descriptor();
-            SCD.Apply(bitmap, 64, 0);
-            return SCD.Norm4BitHistogram;
-        }
-
-        private double CalculateSCDDistance(double[] histogramA, double[] histogramB)
-        {
-            double result = 0;
-
-            for (int i = 0; i < 64; i++)
-            {
-                result += Math.Abs(histogramA[i] - histogramB[i]);
-
-            }
-            return result;
+            // check if ilvi is initialized, if not initialize it
+            if (ilvi == null) ilvi = new Gallery.ImageListViewItem();
+            ilvi.FileName = file.FullName;
+            ilvi.Text = caption + Environment.NewLine;
         }
 
         private void tpImgSearch_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
-                _QueryBitmap = new Bitmap(((string[])e.Data.GetData(DataFormats.FileDrop))[0]);
+                _QueryBitmap = new Bitmap(Image.FromFile(((string[])e.Data.GetData(DataFormats.FileDrop))[0]));
                 tpImgSearch.BackgroundImage = _QueryBitmap;
                 lbDIH1.Visible = false;
             }
@@ -148,6 +203,7 @@ namespace PhotoFinder
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK && !String.IsNullOrEmpty(fbd.SelectedPath))
             {
+                ilvGallery.Items.Clear();
                 PopulateGallery(fbd.SelectedPath);
 
                 _SourceFolderPath = fbd.SelectedPath;

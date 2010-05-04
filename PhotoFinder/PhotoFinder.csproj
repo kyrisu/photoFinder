@@ -36,6 +36,26 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CEDD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Descriptors\CEDD.dll</HintPath>
+    </Reference>
+    <Reference Include="CLD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Descriptors\CLD.dll</HintPath>
+    </Reference>
+    <Reference Include="DCD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Descriptors\DCD.dll</HintPath>
+    </Reference>
+    <Reference Include="EHD, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Descriptors\EHD.dll</HintPath>
+    </Reference>
+    <Reference Include="FCTH, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>lib\Descriptors\FCTH.dll</HintPath>
+    </Reference>
     <Reference Include="ImageListView">
       <HintPath>..\..\imagelistview-read-only\bin\Debug\ImageListView.dll</HintPath>
     </Reference>
@@ -63,6 +83,8 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dbModel.edmx</DependentUpon>
     </Compile>
+    <Compile Include="Descriptor.cs" />
+    <Compile Include="DescriptorTools.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="PhotoFinderForm.cs">
       <SubType>Form</SubType>
@@ -89,7 +111,9 @@
       <Generator>EntityModelCodeGenerator</Generator>
       <LastGenOutput>dbModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
-    <None Include="App.Config" />
+    <None Include="App.Config">
+      <SubType>Designer</SubType>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -101,13 +125,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="lib\Descriptors\CEDD.dll" />
     <Content Include="lib\Descriptors\CLD.dll" />
     <Content Include="lib\Descriptors\DCD.dll" />
     <Content Include="lib\Descriptors\EHD.dll" />
+    <Content Include="lib\Descriptors\FCTH.dll" />
     <Content Include="lib\Descriptors\SCD.dll" />
     <Content Include="lib\Flickr\FlickrNet.dll" />
     <Content Include="lib\Flickr\FlickrNetCF.dll" />
     <Content Include="lib\Flickr\FlickrNetCF.pdb" />
+    <Content Include="lib\ImageListView.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
