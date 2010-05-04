@@ -71,6 +71,10 @@ namespace PhotoFinder
 
         }
 
+        /// <summary>
+        /// Searches in specifide in _SourceFolderPath directory based on SCD
+        /// </summary>
+        /// <param name="query">SCD descriptor from the query image as doublep[]</param>
         private void SearchInFolder(double[] query)
         {
             ilvGallery.Items.Clear();
