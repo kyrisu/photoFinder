@@ -91,7 +91,7 @@ namespace PhotoFinder
             if (desc == Descriptor.NONE)
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
-                SearchInFolder(_SourceFolderPath, DescriptorTools.CalculateSCDHistogram(_QueryBitmap), desc);
+                SearchInFolder(_SourceFolderPath, DescriptorTools.PoliczEHD(_QueryBitmap), desc);
 
         }
 
@@ -138,7 +138,11 @@ namespace PhotoFinder
 
                             if ((desc & Descriptor.EHD) == Descriptor.EHD)
                             {
-                                throw new NotImplementedException();
+                                double distance = DescriptorTools.PoliczOdlegloscEHD(query, DescriptorTools.PoliczEHD(file));
+                                if (distance >= 0)
+                                {
+                                    GalleryEntryBuilder(file, ref ilvi, "EHD diff: " + distance.ToString());
+                                }
                             }
 
                             if ((desc & Descriptor.FCTH) == Descriptor.FCTH)
@@ -208,6 +212,11 @@ namespace PhotoFinder
 
                 _SourceFolderPath = fbd.SelectedPath;
             }
+        }
+
+        private void ilvGallery_ItemClick(object sender, Gallery.ItemClickEventArgs e)
+        {
+
         }
     }
 }
