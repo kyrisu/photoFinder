@@ -91,16 +91,37 @@ namespace PhotoFinder
             if (desc == Descriptor.NONE)
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
-                SearchInFolder(_SourceFolderPath, DescriptorTools.PoliczEHD(_QueryBitmap), desc);
+                //TODO: set multiple descriptors per query
+                SearchInFolder(_SourceFolderPath, GetQuery(_QueryBitmap, desc), desc);
 
+        }
+
+        /// <summary>
+        /// Calculates selected descriptors for query bitmap.
+        /// </summary>
+        /// <param name="_QueryBitmap"></param>
+        /// <param name="desc"></param>
+        /// <returns></returns>
+        private Dictionary<Descriptor, double[]> GetQuery(Bitmap _QueryBitmap, Descriptor desc)
+        {
+            Dictionary<Descriptor, double[]> result = new Dictionary<Descriptor, double[]>();
+            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
+            {
+                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
+                {
+                    result.Add(descriptor, DescriptorTools.CalculateDescriptor(_QueryBitmap, descriptor));
+                }
+            }
+
+            return result;
         }
 
         /// <summary>
         /// Searches in specifide in _SourceFolderPath directory based on SCD
         /// </summary>
         /// <param name="path"></param>
-        /// <param name="query">SCD descriptor from the query image as doublep[]</param>
-        private void SearchInFolder(string path, double[] query, Descriptor desc)
+        /// <param name="query">SCD descriptor from the query image as double[]</param>
+        private void SearchInFolder(string path, Dictionary<Descriptor, double[]> query, Descriptor desc)
         {
 
             if (!String.IsNullOrEmpty(path))
@@ -117,43 +138,16 @@ namespace PhotoFinder
                         {
                             Gallery.ImageListViewItem ilvi = null;
 
-                            if ((desc & Descriptor.SCD) == Descriptor.SCD)
+                            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
                             {
-                                double distance = DescriptorTools.CalculateSCDDistance(query, DescriptorTools.CalculateSCDHistogram(file));
-                                if (distance >= 0)
+                                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
                                 {
-                                    GalleryEntryBuilder(file, ref ilvi, "SCD diff: " + distance.ToString());
+                                    double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], DescriptorTools.CalculateDescriptor(file, descriptor), descriptor);
+                                    if (distance >= 0)
+                                    {
+                                        GalleryEntryBuilder(file, ref ilvi, descriptor.ToString() + ": " + distance.ToString());
+                                    }
                                 }
-                            }
-
-                            if ((desc & Descriptor.CLD) == Descriptor.CLD)
-                            {
-                                throw new NotImplementedException();
-                            }
-
-                            if ((desc & Descriptor.DCD) == Descriptor.DCD)
-                            {
-                                throw new NotImplementedException();
-                            }
-
-                            if ((desc & Descriptor.EHD) == Descriptor.EHD)
-                            {
-                                double distance = DescriptorTools.PoliczOdlegloscEHD(query, DescriptorTools.PoliczEHD(file));
-                                if (distance >= 0)
-                                {
-                                    GalleryEntryBuilder(file, ref ilvi, "EHD diff: " + distance.ToString());
-                                }
-                            }
-
-                            if ((desc & Descriptor.FCTH) == Descriptor.FCTH)
-                            {
-                                throw new NotImplementedException();
-                            }
-
-                            if ((desc & Descriptor.CEDD) == Descriptor.CEDD)
-                            {
-                                // my implementation of CEDD goes here :D
-                                throw new NotImplementedException();
                             }
 
                             // after all descriptors touched the file it goes to the gallery
@@ -178,9 +172,8 @@ namespace PhotoFinder
         private static void GalleryEntryBuilder(FileInfo file, ref Gallery.ImageListViewItem ilvi, string caption)
         {
             // check if ilvi is initialized, if not initialize it
-            if (ilvi == null) ilvi = new Gallery.ImageListViewItem();
-            ilvi.FileName = file.FullName;
-            ilvi.Text = caption + Environment.NewLine;
+            if (ilvi == null) ilvi = new Gallery.ImageListViewItem { FileName = file.FullName };
+            ilvi.Text += caption + Environment.NewLine;
         }
 
         private void tpImgSearch_DragDrop(object sender, DragEventArgs e)
@@ -216,7 +209,7 @@ namespace PhotoFinder
 
         private void ilvGallery_ItemClick(object sender, Gallery.ItemClickEventArgs e)
         {
-
+            lblDescriptorsDetails.Text = e.Item.Text;
         }
     }
 }

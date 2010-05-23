@@ -10,8 +10,8 @@ namespace PhotoFinder
         #region SCD
         public static double[] CalculateSCDHistogram(FileInfo image)
         {
-                Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
-                return CalculateSCDHistogram(bitmap);
+            Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
+            return CalculateSCDHistogram(bitmap);
         }
 
         public static double[] CalculateSCDHistogram(Bitmap bitmap)
@@ -34,9 +34,8 @@ namespace PhotoFinder
         }
 
         #endregion
-    
-    
-    #region EHD
+
+        #region EHD
 
         private static double[,] QuantTable =
             {{0.010867, 0.057915, 0.099526, 0.144849, 0.195573, 0.260504, 0.358031, 0.530128},
@@ -59,7 +58,7 @@ namespace PhotoFinder
             SourceEHDTable = Mpeg7EHD.Apply(bitmap);
             return SourceEHDTable;
         }
-        
+
         public static double PoliczOdlegloscEHD(double[] EHD1, double[] EHD2)
         {
             double result = 0;
@@ -79,7 +78,70 @@ namespace PhotoFinder
             }
             return result;
         }
-    
-    #endregion
+
+        #endregion
+
+        internal static double[] CalculateDescriptor(FileInfo file, Descriptor descriptor)
+        {
+            Bitmap bitmap = (Bitmap)Image.FromFile(file.FullName);
+            return CalculateDescriptor(bitmap, descriptor);
+        }
+
+        internal static double[] CalculateDescriptor(Bitmap _QueryBitmap, Descriptor descriptor)
+        {
+            double[] result = null;
+
+            switch (descriptor)
+            {
+                case Descriptor.CLD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.DCD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.EHD:
+                    result =  PoliczEHD(_QueryBitmap);
+                    break;
+                case Descriptor.SCD:
+                    result = CalculateSCDHistogram(_QueryBitmap);
+                    break;
+                case Descriptor.CEDD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.FCTH:
+                    throw new NotImplementedException();
+                    break;
+            }
+
+            return result;
+        }
+
+        internal static double CalculateDescriptorDistance(double[] descA, double[] descB, Descriptor descriptor)
+        {
+            double result = 0.0;
+            switch (descriptor)
+            {
+                case Descriptor.CLD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.DCD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.EHD:
+                    result = PoliczOdlegloscEHD(descA, descB);
+                    break;
+                case Descriptor.SCD:
+                    result = CalculateSCDDistance(descA, descB);
+                    break;
+                case Descriptor.CEDD:
+                    throw new NotImplementedException();
+                    break;
+                case Descriptor.FCTH:
+                    throw new NotImplementedException();
+                    break;
+            }
+
+            return result;
+        }
     }
 }
