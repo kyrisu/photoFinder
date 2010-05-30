@@ -145,7 +145,7 @@ namespace PhotoFinder
                                     double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], DescriptorTools.CalculateDescriptor(file, descriptor), descriptor);
                                     if (distance >= 0)
                                     {
-                                        GalleryEntryBuilder(file, ref ilvi, descriptor.ToString() + ": " + distance.ToString());
+                                        GalleryEntryBuilder(file, ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
                                     }
                                 }
                             }
