@@ -16,6 +16,7 @@ namespace PhotoFinder
 
         public static double[] CalculateSCDHistogram(Bitmap bitmap)
         {
+
             SCD_Descriptor SCD = new SCD_Descriptor();
             SCD.Apply(bitmap, 64, 0);
             return SCD.Norm4BitHistogram;
@@ -33,6 +34,62 @@ namespace PhotoFinder
             return result;
         }
 
+        #endregion
+
+        #region FCTH
+
+        public static double[] CalculateFCTHescriptor(FileInfo image)
+        {
+            Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
+            return CalculateFCTHescriptor(bitmap);
+        }
+
+        public static double[] CalculateFCTHescriptor(Bitmap bitmap)
+        {
+            FCTH_Descriptor.FCTH FCTH = new FCTH_Descriptor.FCTH();
+
+            return FCTH.Apply(bitmap, 2);
+
+        }
+
+        /// <summary>
+        /// Calculating CEDD deviation using Tonimoto Classifier
+        /// </summary>
+        /// <param name="histogramA"></param>
+        /// <param name="histogramB"></param>
+        /// <returns></returns>
+        public static double CalculateFCTHDeviation(double[] histogramA, double[] histogramB)
+        {
+            double Result = 0;
+            double Temp1 = 0;
+            double Temp2 = 0;
+
+            double TempCount1 = 0, TempCount2 = 0, TempCount3 = 0;
+
+            for (int i = 0; i < histogramA.Length; i++)
+            {
+                Temp1 += histogramA[i];
+                Temp2 += histogramB[i];
+            }
+
+            if (Temp1 == 0 || Temp2 == 0) Result = 100;
+            if (Temp1 == 0 && Temp2 == 0) Result = 0;
+
+            if (Temp1 > 0 && Temp2 > 0)
+            {
+                for (int i = 0; i < histogramA.Length; i++)
+                {
+                    TempCount1 += (histogramA[i] / Temp1) * (histogramB[i] / Temp2);
+                    TempCount2 += (histogramB[i] / Temp2) * (histogramB[i] / Temp2);
+                    TempCount3 += (histogramA[i] / Temp1) * (histogramA[i] / Temp1);
+
+                }
+
+                Result = (100 - 100 * (TempCount1 / (TempCount2 + TempCount3 - TempCount1))); //Tanimoto
+            }
+
+            return (Result);
+        }
         #endregion
 
         #region CEDD
@@ -154,7 +211,7 @@ namespace PhotoFinder
                     throw new NotImplementedException();
                     break;
                 case Descriptor.EHD:
-                    result =  PoliczEHD(_QueryBitmap);
+                    result = PoliczEHD(_QueryBitmap);
                     break;
                 case Descriptor.SCD:
                     result = CalculateSCDHistogram(_QueryBitmap);
@@ -163,7 +220,7 @@ namespace PhotoFinder
                     result = CalculateCEDDescriptor(_QueryBitmap);
                     break;
                 case Descriptor.FCTH:
-                    throw new NotImplementedException();
+                    result = CalculateFCTHescriptor(_QueryBitmap);
                     break;
             }
 
@@ -191,7 +248,7 @@ namespace PhotoFinder
                     result = CalculateCEDDDeviation(descA, descB);
                     break;
                 case Descriptor.FCTH:
-                    throw new NotImplementedException();
+                    result = CalculateFCTHDeviation(descA, descB);
                     break;
             }
 
