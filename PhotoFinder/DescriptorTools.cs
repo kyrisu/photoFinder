@@ -192,6 +192,80 @@ namespace PhotoFinder
 
         #endregion
 
+        #region CLD
+
+
+        
+        int[] ZrodloYCDL = new int[6];
+        int[] ZrodloCbCDL = new int[3];
+        int[] ZrodloCrCDL = new int[3];
+        int[] DoPorownaniaYCDL = new int[6];
+        int[] DoPorownaniaCbCDL = new int[3];
+        int[] DoPorownaniaCrCDL = new int[3];
+
+        public static void PoliczCLD(FileInfo image, int[] YCDL, int[] CbCDL, int[] CrCDL)
+        {
+            Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
+            PoliczCLD(bitmap,YCDL,CbCDL,CrCDL);
+        }
+
+        public static double PoliczCLD(Bitmap bitmap, int[] YCDL, int[] CbCDL, int[] CrCDL)
+        {
+            CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
+            Mpeg7CLD.Apply(bitmap);
+            for (int h = 0;h <6; h++)
+            {
+                YCDL[h] = Mpeg7CLD.YCoeff[h];
+                if (h < 3)
+                {
+                    CbCDL[h] = Mpeg7CLD.CbCoeff[h];
+                    CrCDL[h] = Mpeg7CLD.CrCoeff[h];
+                }
+            }
+            return 0;
+        }
+
+        public double[] policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
+        {
+            int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
+            //Numbers of the Coefficients of two descriptor values.
+            numYCoeff1 = YCoeff1.Length;
+            numYCoeff2 = YCoeff2.Length;
+            CCoeff1 = CbCoeff1.Length;
+            CCoeff2 = CbCoeff2.Length;
+            //take the Minimal Coeff-number
+            YCoeff = Math.Min(numYCoeff1, numYCoeff2);
+            CCoeff = Math.Min(CCoeff1, CCoeff2);
+            setWeightingValues();
+            int j;
+            int[] sum = new int[3];
+            int diff;
+            sum[0] = 0;
+            for (j = 0; j < YCoeff; j++)
+            {
+                diff = (YCoeff1[j] - YCoeff2[j]);
+                sum[0] += (weightMatrix[0, j] * diff * diff);
+            }
+            sum[1] = 0;
+            for (j = 0; j < CCoeff; j++)
+            {
+                diff = (CbCoeff1[j] - CbCoeff2[j]);
+                sum[1] += (weightMatrix[1, j] * diff * diff);
+            }
+            sum[2] = 0;
+            for (j = 0; j < CCoeff; j++)
+            {
+                diff = (CrCoeff1[j] - CrCoeff2[j]);
+                sum[2] += (weightMatrix[2, j] * diff * diff);
+            }
+            //returns the distance between the two desciptor values
+            return Math.Sqrt(sum[0] * 1.0) + Math.Sqrt(sum[1] * 1.0) + Math.Sqrt(sum[2] * 1.0);
+        }
+
+
+        #endregion
+
+
         internal static double[] CalculateDescriptor(FileInfo file, Descriptor descriptor)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(file.FullName);
@@ -201,11 +275,16 @@ namespace PhotoFinder
         internal static double[] CalculateDescriptor(Bitmap _QueryBitmap, Descriptor descriptor)
         {
             double[] result = null;
+            int[] YCDL = new int[6];
+            int[] CbCDL = new int[3];
+            int[] CrCDL = new int[3];
 
             switch (descriptor)
             {
                 case Descriptor.CLD:
-                    throw new NotImplementedException();
+                    
+ 
+                     result = PoliczCLD(_QueryBitmap, YCDL, CbCDL, CrCDL);
                     break;
                 case Descriptor.DCD:
                     throw new NotImplementedException();
