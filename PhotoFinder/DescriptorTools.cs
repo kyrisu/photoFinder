@@ -22,13 +22,15 @@ namespace PhotoFinder
             return SCD.Norm4BitHistogram;
         }
 
-        public static double CalculateSCDDeviation(double[] histogramA, double[] histogramB)
+        public static double CalculateSCDDeviation(object ohistogramA, object ohistogramB)
         {
+            double[] histogramA = (double[])ohistogramA;
+            double[] histogramB = (double[])ohistogramB;
             double result = 0;
 
             for (int i = 0; i < 64; i++)
             {
-                result += Math.Abs(histogramA[i] - histogramB[i]);
+                result += Math.Abs(((double[])histogramA)[i] - ((double[])histogramB)[i]);
 
             }
             return result;
@@ -58,8 +60,10 @@ namespace PhotoFinder
         /// <param name="histogramA"></param>
         /// <param name="histogramB"></param>
         /// <returns></returns>
-        public static double CalculateFCTHDeviation(double[] histogramA, double[] histogramB)
+        public static double CalculateFCTHDeviation(object ohistogramA, object ohistogramB)
         {
+            double[] histogramA = (double[]) ohistogramA;
+            double[] histogramB = (double[]) ohistogramB;
             double Result = 0;
             double Temp1 = 0;
             double Temp2 = 0;
@@ -112,8 +116,10 @@ namespace PhotoFinder
         /// <param name="histogramA"></param>
         /// <param name="histogramB"></param>
         /// <returns></returns>
-        public static double CalculateCEDDDeviation(double[] histogramA, double[] histogramB)
+        public static double CalculateCEDDDeviation(object ohistogramA, object ohistogramB)
         {
+            double[] histogramA = (double[])ohistogramA;
+            double[] histogramB = (double[])ohistogramB;
             double Result = 0;
             double Temp1 = 0;
             double Temp2 = 0;
@@ -170,8 +176,10 @@ namespace PhotoFinder
             return SourceEHDTable;
         }
 
-        public static double PoliczOdlegloscEHD(double[] EHD1, double[] EHD2)
+        public static double PoliczOdlegloscEHD(object oEHD1, object oEHD2)
         {
+            double[] EHD1 = (double[])oEHD1;
+            double[] EHD2 = (double[])oEHD2;
             double result = 0;
 
             for (int i = 0; i < EHD1.Length; i++)
@@ -225,7 +233,7 @@ namespace PhotoFinder
             return 0;
         }
 
-        public double[] policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
+        public double policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
         {
             int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
             //Numbers of the Coefficients of two descriptor values.
@@ -266,15 +274,15 @@ namespace PhotoFinder
         #endregion
 
 
-        internal static double[] CalculateDescriptor(FileInfo file, Descriptor descriptor)
+        internal static object CalculateDescriptor(FileInfo file, Descriptor descriptor)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(file.FullName);
             return CalculateDescriptor(bitmap, descriptor);
         }
 
-        internal static double[] CalculateDescriptor(Bitmap _QueryBitmap, Descriptor descriptor)
+        internal static object CalculateDescriptor(Bitmap _QueryBitmap, Descriptor descriptor)
         {
-            double[] result = null;
+            object result = null;
             int[] YCDL = new int[6];
             int[] CbCDL = new int[3];
             int[] CrCDL = new int[3];
@@ -284,7 +292,7 @@ namespace PhotoFinder
                 case Descriptor.CLD:
                     
  
-                     result = PoliczCLD(_QueryBitmap, YCDL, CbCDL, CrCDL);
+                    result = PoliczCLD(_QueryBitmap, YCDL, CbCDL, CrCDL);
                     break;
                 case Descriptor.DCD:
                     throw new NotImplementedException();
@@ -306,7 +314,7 @@ namespace PhotoFinder
             return result;
         }
 
-        internal static double CalculateDescriptorDistance(double[] descA, double[] descB, Descriptor descriptor)
+        internal static double CalculateDescriptorDistance(object descA, object descB, Descriptor descriptor)
         {
             double result = 0.0;
             switch (descriptor)
