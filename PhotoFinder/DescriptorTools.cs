@@ -211,26 +211,27 @@ namespace PhotoFinder
         int[] DoPorownaniaCbCDL = new int[3];
         int[] DoPorownaniaCrCDL = new int[3];
 
-        public static void PoliczCLD(FileInfo image, int[] YCDL, int[] CbCDL, int[] CrCDL)
+        public static double[][] PoliczCLD(FileInfo image)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
-            PoliczCLD(bitmap,YCDL,CbCDL,CrCDL);
+            return PoliczCLD(bitmap);
         }
 
-        public static double PoliczCLD(Bitmap bitmap, int[] YCDL, int[] CbCDL, int[] CrCDL)
+        public static double[][] PoliczCLD(Bitmap bitmap)
         {
             CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
+            double[][] temp;
             Mpeg7CLD.Apply(bitmap);
             for (int h = 0;h <6; h++)
             {
-                YCDL[h] = Mpeg7CLD.YCoeff[h];
+                temp[0][h] = Mpeg7CLD.YCoeff[h];
                 if (h < 3)
                 {
-                    CbCDL[h] = Mpeg7CLD.CbCoeff[h];
-                    CrCDL[h] = Mpeg7CLD.CrCoeff[h];
+                    temp[1][h] = Mpeg7CLD.CbCoeff[h];
+                    temp[2][h] = Mpeg7CLD.CrCoeff[h];
                 }
             }
-            return 0;
+            return temp;
         }
 
         public double policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
@@ -283,16 +284,13 @@ namespace PhotoFinder
         internal static object CalculateDescriptor(Bitmap _QueryBitmap, Descriptor descriptor)
         {
             object result = null;
-            int[] YCDL = new int[6];
-            int[] CbCDL = new int[3];
-            int[] CrCDL = new int[3];
-
+            
             switch (descriptor)
             {
                 case Descriptor.CLD:
                     
  
-                    result = PoliczCLD(_QueryBitmap, YCDL, CbCDL, CrCDL);
+                    result = PoliczCLD(_QueryBitmap);
                     break;
                 case Descriptor.DCD:
                     throw new NotImplementedException();
