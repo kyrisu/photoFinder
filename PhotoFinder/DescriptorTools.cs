@@ -204,37 +204,52 @@ namespace PhotoFinder
 
 
         
-        int[] ZrodloYCDL = new int[6];
-        int[] ZrodloCbCDL = new int[3];
-        int[] ZrodloCrCDL = new int[3];
-        int[] DoPorownaniaYCDL = new int[6];
-        int[] DoPorownaniaCbCDL = new int[3];
-        int[] DoPorownaniaCrCDL = new int[3];
+       // int[] ZrodloYCDL = new int[6];
+       // int[] ZrodloCbCDL = new int[3];
+       // int[] ZrodloCrCDL = new int[3];
+       
 
-        public static double[][] PoliczCLD(FileInfo image)
+        public static double[,] PoliczCLD(FileInfo image)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
             return PoliczCLD(bitmap);
         }
 
-        public static double[][] PoliczCLD(Bitmap bitmap)
+        public static double[,] PoliczCLD(Bitmap bitmap)
         {
             CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
-            double[][] temp;
+
+            double[,] temp= new double[3,6];
+
             Mpeg7CLD.Apply(bitmap);
             for (int h = 0;h <6; h++)
             {
-                temp[0][h] = Mpeg7CLD.YCoeff[h];
+                temp[0,h] = Mpeg7CLD.YCoeff[h];
                 if (h < 3)
                 {
-                    temp[1][h] = Mpeg7CLD.CbCoeff[h];
-                    temp[2][h] = Mpeg7CLD.CrCoeff[h];
+                    temp[1,h] = Mpeg7CLD.CbCoeff[h];
+                    temp[2,h] = Mpeg7CLD.CrCoeff[h];
                 }
             }
             return temp;
         }
 
-        public double policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
+        private static void setWeightingValues()
+        {
+            weightMatrix[0, 0] = 2;
+            weightMatrix[0, 1] = weightMatrix[0, 2] = 2;
+            weightMatrix[1, 0] = 2;
+            weightMatrix[1, 1] = weightMatrix[1, 2] = 1;
+            weightMatrix[2, 0] = 4;
+            weightMatrix[2, 1] = weightMatrix[2, 2] = 2;
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 3; j < 64; j++)
+                    weightMatrix[i, j] = 1;
+            }
+        }
+
+        public static double policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
         {
             int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
             //Numbers of the Coefficients of two descriptor values.
