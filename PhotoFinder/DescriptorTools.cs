@@ -219,17 +219,15 @@ namespace PhotoFinder
         {
             CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
 
-            double[,] temp= new double[3,6];
+            double[,] temp= new double[3,64];
 
             Mpeg7CLD.Apply(bitmap);
-            for (int h = 0;h <6; h++)
+            for (int h = 0;h <64; h++)
             {
-                temp[0,h] = Mpeg7CLD.YCoeff[h];
-                if (h < 3)
-                {
-                    temp[1,h] = Mpeg7CLD.CbCoeff[h];
-                    temp[2,h] = Mpeg7CLD.CrCoeff[h];
-                }
+                temp[0,h] = Mpeg7CLD.YCoeff[h]; // skladowa luminancji
+                temp[1,h] = Mpeg7CLD.CbCoeff[h]; // skladowa roznicowa
+                temp[2,h] = Mpeg7CLD.CrCoeff[h]; // skladowa chrominancji
+                
             }
             return temp;
         }
@@ -249,8 +247,25 @@ namespace PhotoFinder
             }
         }
 
-        public static double policzodlegloscCLD(int[] YCoeff1, int[] CbCoeff1, int[] CrCoeff1, int[] YCoeff2, int[] CbCoeff2, int[] CrCoeff2)
+        public static double policzodlegloscCLD( int [,]CLD1, int[,] CLD2)
         {
+            int[] YCoeff1 = new int[64];
+            int[] CbCoeff1 = new int[64];
+            int[] CrCoeff1 = new int[64];
+            int[] YCoeff2 = new int[64];
+            int[] CbCoeff2 = new int[64];
+            int[] CrCoeff2 = new int[64];
+
+            for (int h = 0; h < 64; h++)
+            {
+                YCoeff1[h] = CLD1[0,h]; 
+                CbCoeff1[h] = CLD1[1,h]; 
+                CrCoeff1[h] = CLD1[2,h]; 
+                YCoeff2[h] = CLD2[0, h]; 
+                CbCoeff2[h] = CLD2[1, h]; 
+                CrCoeff2[h] = CLD2[2, h]; 
+
+            }
             int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
             //Numbers of the Coefficients of two descriptor values.
             numYCoeff1 = YCoeff1.Length;
@@ -333,7 +348,7 @@ namespace PhotoFinder
             switch (descriptor)
             {
                 case Descriptor.CLD:
-                    throw new NotImplementedException();
+                    resoult = policzodlegloscCLD(descA, descB);
                     break;
                 case Descriptor.DCD:
                     throw new NotImplementedException();
