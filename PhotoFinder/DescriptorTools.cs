@@ -247,8 +247,10 @@ namespace PhotoFinder
             }
         }
 
-        public static double policzodlegloscCLD( int [,]CLD1, int[,] CLD2)
+        public static double policzodlegloscCLD( object oCLD1, object oCLD2)
         {
+            int[,] CLD1 = (int[,])oCLD1;
+            int[,] CLD2 = (int[,])oCLD2;
             int[] YCoeff1 = new int[64];
             int[] CbCoeff1 = new int[64];
             int[] CrCoeff1 = new int[64];
@@ -348,7 +350,7 @@ namespace PhotoFinder
             switch (descriptor)
             {
                 case Descriptor.CLD:
-                    resoult = policzodlegloscCLD(descA, descB);
+                    result = policzodlegloscCLD(descA, descB);
                     break;
                 case Descriptor.DCD:
                     throw new NotImplementedException();

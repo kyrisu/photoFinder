@@ -102,9 +102,9 @@ namespace PhotoFinder
         /// <param name="_QueryBitmap"></param>
         /// <param name="desc"></param>
         /// <returns></returns>
-        private Dictionary<Descriptor, double[]> GetQuery(Bitmap _QueryBitmap, Descriptor desc)
+        private Dictionary<Descriptor, object> GetQuery(Bitmap _QueryBitmap, Descriptor desc)
         {
-            Dictionary<Descriptor, double[]> result = new Dictionary<Descriptor, double[]>();
+            Dictionary<Descriptor, object> result = new Dictionary<Descriptor, object>();
             foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
             {
                 if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
@@ -121,7 +121,7 @@ namespace PhotoFinder
         /// </summary>
         /// <param name="path"></param>
         /// <param name="query">SCD descriptor from the query image as double[]</param>
-        private void SearchInFolder(string path, Dictionary<Descriptor, double[]> query, Descriptor desc)
+        private void SearchInFolder(string path, Dictionary<Descriptor, object> query, Descriptor desc)
         {
 
             if (!String.IsNullOrEmpty(path))
