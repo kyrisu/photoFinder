@@ -19,7 +19,8 @@ namespace PhotoFinder
             if (!(Path.GetExtension(fi.Extension).Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase)))
+                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase)
+                || Path.GetExtension(fi.Extension).Equals(".tmp", StringComparison.InvariantCultureIgnoreCase)))
                 return false;
 
             try

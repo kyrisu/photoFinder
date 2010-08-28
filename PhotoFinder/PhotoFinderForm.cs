@@ -8,6 +8,8 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Gallery = Manina.Windows.Forms;
+using FlickrNet;
+using System.Net;
 
 namespace PhotoFinder
 {
@@ -18,31 +20,28 @@ namespace PhotoFinder
         /// </summary>
         private Bitmap _QueryBitmap = null;
 
+        private Flickr _Flickr;
         private string _SourceFolderPath;
+        bool _IsIndexing = false;
+
         public PhotoFinderForm()
         {
             InitializeComponent();
-
-
         }
 
         private void PopulateGallery(string path)
         {
             try
             {
-                foreach (var folder in (new DirectoryInfo(path)).GetDirectories())
-                {
-                    PopulateGallery(folder.FullName);
-                }
-                foreach (var file in (new DirectoryInfo(path)).GetFiles())
-                {
+                FileInfo file = new FileInfo(path);
                     if (file.IsImage())
                     {
                         Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
                         ilvi.FileName = file.FullName;
                         ilvGallery.Items.Add(ilvi);
+                        Application.DoEvents();
                     }
-                }
+                
             }
             catch (UnauthorizedAccessException)
             {
@@ -210,6 +209,53 @@ namespace PhotoFinder
         private void ilvGallery_ItemClick(object sender, Gallery.ItemClickEventArgs e)
         {
             lblDescriptorsDetails.Text = e.Item.Text;
+        }
+
+        private void btnSearchFlickr_Click(object sender, EventArgs e)
+        {
+            if (_IsIndexing)
+            {
+                _IsIndexing = false;
+                btnSearchFlickr.Text = "Index Flickr";
+                return;
+            }
+
+            _IsIndexing = true;
+            btnSearchFlickr.Text = "Stop Indexing";
+            if (String.IsNullOrWhiteSpace(tbFlickrQuery.Text))
+            {
+                MessageBox.Show("The query you entered is invalid");
+                return;
+            }
+            PhotoSearchOptions searchOptions = new PhotoSearchOptions();
+            searchOptions.Tags = tbFlickrQuery.Text;
+
+            PhotoCollection photoCollection;
+            _Flickr.PhotosSearchAsync(searchOptions, result =>
+            {
+                if (result.HasError)
+                {
+                    //TODO: exception handling
+                }
+                else
+                {
+                    photoCollection = result.Result;
+                    WebClient client = new WebClient();
+                    foreach (Photo photo in photoCollection)
+                    {
+                        string tempFile = Path.GetTempFileName();
+                        client.DownloadFile(photo.MediumUrl, tempFile);
+                        PopulateGallery(tempFile);
+                        if (!_IsIndexing) return;
+                    }
+                    btnSearchFlickr.Text = "Index Flickr";
+                }
+            });
+        }
+
+        private void PhotoFinderForm_Load(object sender, EventArgs e)
+        {
+            _Flickr = new Flickr("135794b7b378a7ecbd10186748d28fb0");
         }
     }
 }

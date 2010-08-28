@@ -45,6 +45,8 @@
             this.btnSearch = new System.Windows.Forms.Button();
             this.gbImgDetails = new System.Windows.Forms.GroupBox();
             this.lblDescriptorsDetails = new System.Windows.Forms.Label();
+            this.tbFlickrQuery = new System.Windows.Forms.TextBox();
+            this.btnSearchFlickr = new System.Windows.Forms.Button();
             this.tcSearch.SuspendLayout();
             this.tpImgSearch.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -245,11 +247,30 @@
             this.lblDescriptorsDetails.Size = new System.Drawing.Size(0, 13);
             this.lblDescriptorsDetails.TabIndex = 0;
             // 
+            // tbFlickrQuery
+            // 
+            this.tbFlickrQuery.Location = new System.Drawing.Point(243, 4);
+            this.tbFlickrQuery.Name = "tbFlickrQuery";
+            this.tbFlickrQuery.Size = new System.Drawing.Size(242, 20);
+            this.tbFlickrQuery.TabIndex = 7;
+            // 
+            // btnSearchFlickr
+            // 
+            this.btnSearchFlickr.Location = new System.Drawing.Point(491, 1);
+            this.btnSearchFlickr.Name = "btnSearchFlickr";
+            this.btnSearchFlickr.Size = new System.Drawing.Size(75, 23);
+            this.btnSearchFlickr.TabIndex = 8;
+            this.btnSearchFlickr.Text = "Index Flickr";
+            this.btnSearchFlickr.UseVisualStyleBackColor = true;
+            this.btnSearchFlickr.Click += new System.EventHandler(this.btnSearchFlickr_Click);
+            // 
             // PhotoFinderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1045, 480);
+            this.Controls.Add(this.btnSearchFlickr);
+            this.Controls.Add(this.tbFlickrQuery);
             this.Controls.Add(this.gbImgDetails);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.clbDescriptorsList);
@@ -260,6 +281,7 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PhotoFinderForm";
             this.Text = "PhotoFinder";
+            this.Load += new System.EventHandler(this.PhotoFinderForm_Load);
             this.tcSearch.ResumeLayout(false);
             this.tpImgSearch.ResumeLayout(false);
             this.tpImgSearch.PerformLayout();
@@ -292,6 +314,8 @@
         private Manina.Windows.Forms.ImageListView ilvGallery;
         private System.Windows.Forms.GroupBox gbImgDetails;
         private System.Windows.Forms.Label lblDescriptorsDetails;
+        private System.Windows.Forms.TextBox tbFlickrQuery;
+        private System.Windows.Forms.Button btnSearchFlickr;
     }
 }
 
