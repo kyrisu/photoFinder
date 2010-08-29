@@ -20,31 +20,31 @@
   </EntityContainer>
   <EntityType Name="PhotoSet">
     <Key>
-      <PropertyRef Name="Id" />
+      <PropertyRef Name="PhotoID" />
     </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
-    <Property Name="Name" Type="nvarchar" Nullable="false" />
-    <Property Name="Url" Type="nvarchar" Nullable="false" />
+    <Property Name="PhotoID" Type="nvarchar" Nullable="false" />
+    <Property Name="Title" Type="nvarchar" Nullable="false" />
+    <Property Name="Url" Type="nvarchar" Nullable="true" />
     <Property Name="SCD" Type="varbinary" Nullable="false" />
     <Property Name="CLD" Type="varbinary" Nullable="false" />
-    <Property Name="DCD" Type="varbinary" Nullable="false" />
+    <Property Name="DCD" Type="varbinary" Nullable="true" />
     <Property Name="EHD" Type="varbinary" Nullable="false" />
     <Property Name="CEDD" Type="varbinary" Nullable="false" />
-    <Property Name="FCTH" Type="nvarchar" Nullable="false" />
+    <Property Name="FCTH" Type="varbinary" Nullable="false" />
   </EntityType>
   <EntityType Name="TagSet">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
-    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Id" Type="int" Nullable="false" />
     <Property Name="Name" Type="nvarchar" Nullable="false" />
   </EntityType>
   <EntityType Name="Tags">
     <Key>
-      <PropertyRef Name="Photos_Id" />
+      <PropertyRef Name="Photos_PhotoID" />
       <PropertyRef Name="Tags_Id" />
     </Key>
-    <Property Name="Photos_Id" Type="int" Nullable="false" />
+    <Property Name="Photos_PhotoID" Type="nvarchar" Nullable="false" />
     <Property Name="Tags_Id" Type="int" Nullable="false" />
   </EntityType>
   <Association Name="FK_Tags_Photo">
@@ -52,10 +52,10 @@
     <End Role="Tags" Type="PhotosModel.Store.Tags" Multiplicity="*" />
     <ReferentialConstraint>
       <Principal Role="Photo">
-        <PropertyRef Name="Id" />
+        <PropertyRef Name="PhotoID" />
       </Principal>
       <Dependent Role="Tags">
-        <PropertyRef Name="Photos_Id" />
+        <PropertyRef Name="Photos_PhotoID" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -87,12 +87,12 @@
           <Key>
             <PropertyRef Name="PhotoID" />
           </Key>
-          <Property Type="String" Name="PhotoID" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="String" Name="PhotoID" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Type="String" Name="Title" Nullable="false" />
-          <Property Type="String" Name="Url" Nullable="false" />
+          <Property Type="String" Name="Url" Nullable="true" />
           <Property Type="Binary" Name="SCD" Nullable="false" />
           <Property Type="Binary" Name="CLD" Nullable="false" />
-          <Property Type="Binary" Name="DCD" Nullable="false" />
+          <Property Type="Binary" Name="DCD" Nullable="true" />
           <Property Type="Binary" Name="EHD" Nullable="false" />
           <Property Type="Binary" Name="CEDD" Nullable="false" />
           <Property Type="Binary" Name="FCTH" Nullable="false" />
@@ -102,7 +102,7 @@
           <Key>
             <PropertyRef Name="Id" />
           </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Type="String" Name="Name" Nullable="false" />
           <NavigationProperty Name="Photos" Relationship="PhotosModel.Tags" FromRole="Tag" ToRole="Photo" />
         </EntityType>
@@ -119,8 +119,8 @@
     <EntitySetMapping Name="PhotoSet">
       <EntityTypeMapping TypeName="IsTypeOf(PhotosModel.Photo)">
         <MappingFragment StoreEntitySet="PhotoSet">
-          <ScalarProperty Name="PhotoID" ColumnName="Id" />
-          <ScalarProperty Name="Title" ColumnName="Name" />
+          <ScalarProperty Name="PhotoID" ColumnName="PhotoID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
           <ScalarProperty Name="Url" ColumnName="Url" />
           <ScalarProperty Name="SCD" ColumnName="SCD" />
           <ScalarProperty Name="CLD" ColumnName="CLD" />
@@ -141,7 +141,7 @@
     </EntitySetMapping>
     <AssociationSetMapping Name="Tags" TypeName="PhotosModel.Tags" StoreEntitySet="Tags">
       <EndProperty Name="Photo">
-        <ScalarProperty Name="PhotoID" ColumnName="Photos_Id" />
+        <ScalarProperty Name="PhotoID" ColumnName="Photos_PhotoID" />
       </EndProperty>
       <EndProperty Name="Tag">
         <ScalarProperty Name="Id" ColumnName="Tags_Id" />

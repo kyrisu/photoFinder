@@ -144,22 +144,18 @@ namespace PhotoFinder
         /// </summary>
         /// <param name="photoID">Initial value of the PhotoID property.</param>
         /// <param name="title">Initial value of the Title property.</param>
-        /// <param name="url">Initial value of the Url property.</param>
         /// <param name="sCD">Initial value of the SCD property.</param>
         /// <param name="cLD">Initial value of the CLD property.</param>
-        /// <param name="dCD">Initial value of the DCD property.</param>
         /// <param name="eHD">Initial value of the EHD property.</param>
         /// <param name="cEDD">Initial value of the CEDD property.</param>
         /// <param name="fCTH">Initial value of the FCTH property.</param>
-        public static Photo CreatePhoto(global::System.String photoID, global::System.String title, global::System.String url, global::System.Byte[] sCD, global::System.Byte[] cLD, global::System.Byte[] dCD, global::System.Byte[] eHD, global::System.Byte[] cEDD, global::System.Byte[] fCTH)
+        public static Photo CreatePhoto(global::System.String photoID, global::System.String title, global::System.Byte[] sCD, global::System.Byte[] cLD, global::System.Byte[] eHD, global::System.Byte[] cEDD, global::System.Byte[] fCTH)
         {
             Photo photo = new Photo();
             photo.PhotoID = photoID;
             photo.Title = title;
-            photo.Url = url;
             photo.SCD = sCD;
             photo.CLD = cLD;
-            photo.DCD = dCD;
             photo.EHD = eHD;
             photo.CEDD = cEDD;
             photo.FCTH = fCTH;
@@ -223,7 +219,7 @@ namespace PhotoFinder
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.String Url
         {
@@ -235,7 +231,7 @@ namespace PhotoFinder
             {
                 OnUrlChanging(value);
                 ReportPropertyChanging("Url");
-                _Url = StructuralObject.SetValidValue(value, false);
+                _Url = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("Url");
                 OnUrlChanged();
             }
@@ -295,7 +291,7 @@ namespace PhotoFinder
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
         public global::System.Byte[] DCD
         {
@@ -307,7 +303,7 @@ namespace PhotoFinder
             {
                 OnDCDChanging(value);
                 ReportPropertyChanging("DCD");
-                _DCD = StructuralObject.SetValidValue(value, false);
+                _DCD = StructuralObject.SetValidValue(value, true);
                 ReportPropertyChanged("DCD");
                 OnDCDChanged();
             }

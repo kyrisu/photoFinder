@@ -22,15 +22,15 @@ namespace PhotoFinder
         private Bitmap _QueryBitmap = null;
 
         private Flickr _Flickr;
-        private string _SourceFolderPath;
         bool _IsIndexing = false;
 
         public PhotoFinderForm()
         {
             InitializeComponent();
+            _Flickr = new Flickr("135794b7b378a7ecbd10186748d28fb0");
         }
 
-        private void PopulateGallery(string path)
+        private void PopulateGallery(string path, string photoID)
         {
             try
             {
@@ -39,6 +39,7 @@ namespace PhotoFinder
                 {
                     Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
                     ilvi.FileName = file.FullName;
+                    ilvi.Tag = photoID;
                     ilvGallery.Items.Add(ilvi);
                     Application.DoEvents();
                 }
@@ -91,8 +92,6 @@ namespace PhotoFinder
             if (desc == Descriptor.NONE)
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
-                //TODO: set multiple descriptors per query
-                //SearchInFolder(_SourceFolderPath, GetQuery(_QueryBitmap, desc), desc);
                 SearchInDatabase(GetQuery(_QueryBitmap, desc), desc);
 
         }
@@ -124,74 +123,34 @@ namespace PhotoFinder
                 try
                 {
                     PhotosEntities photoEntities = new PhotosEntities();
-                    
+
                     foreach (var entry in photoEntities.PhotoSet)
                     {
-                            Gallery.ImageListViewItem ilvi = null;
+                        Gallery.ImageListViewItem ilvi = null;
 
-                            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
-                            {
-                                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
-                                {
-                                    double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], entry.GetByIndex(descriptor.ToString()).BDeserialize(), descriptor);
-                                    if (distance >= 0)
-                                    {
-                                        string tmpFileName = Path.GetTempFileName();
-                                        WebClient client = new WebClient();
-                                        client.DownloadFile(entry.Url, tmpFileName);
-                                        GalleryEntryBuilder(new FileInfo(tmpFileName), ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
-                                    }
-                                }
-                            }
-
-                            // after all descriptors touched the file it goes to the gallery
-                            if (ilvi != null) ilvGallery.Items.Add(ilvi);
-                    }
-                }
-                catch (UnauthorizedAccessException)
-                {
-                    // again.. so what.. go go go!
-                }
-            }
-        }
-
-        /// <summary>
-        /// Searches in specifide in _SourceFolderPath directory based on SCD
-        /// </summary>
-        /// <param name="path"></param>
-        /// <param name="query">SCD descriptor from the query image as double[]</param>
-        private void SearchInFolder(string path, Dictionary<Descriptor, object> query, Descriptor desc)
-        {
-
-            if (!String.IsNullOrEmpty(path))
-            {
-                try
-                {
-                    foreach (var folder in (new DirectoryInfo(path)).GetDirectories())
-                    {
-                        SearchInFolder(folder.FullName, query, desc);
-                    }
-                    foreach (var file in (new DirectoryInfo(path)).GetFiles())
-                    {
-                        if (file.IsImage())
+                        foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
                         {
-                            Gallery.ImageListViewItem ilvi = null;
-
-                            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
+                            if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
                             {
-                                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
+                                double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], entry.GetByIndex(descriptor.ToString()).BDeserialize(), descriptor);
+                                if (distance >= 0)
                                 {
-                                    double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], DescriptorTools.CalculateDescriptor(file, descriptor), descriptor);
-                                    if (distance >= 0)
+                                    string tmpFileName = TempManager.GetTempFileName();
+                                    WebClient client = new WebClient();
+                                    if (entry.Url != null)
+                                        client.DownloadFile(entry.Url, tmpFileName);
+                                    else
                                     {
-                                        GalleryEntryBuilder(file, ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
+                                        PhotoInfo photoInfo = _Flickr.PhotosGetInfo(entry.PhotoID);
+                                        client.DownloadFile(photoInfo.ThumbnailUrl, tmpFileName);
                                     }
+                                    GalleryEntryBuilder(new FileInfo(tmpFileName), ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
                                 }
                             }
-
-                            // after all descriptors touched the file it goes to the gallery
-                            if (ilvi != null) ilvGallery.Items.Add(ilvi);
                         }
+
+                        // after all descriptors touched the file it goes to the gallery
+                        if (ilvi != null) ilvGallery.Items.Add(ilvi);
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -199,7 +158,6 @@ namespace PhotoFinder
                     // again.. so what.. go go go!
                 }
             }
-
         }
 
         /// <summary>
@@ -219,7 +177,11 @@ namespace PhotoFinder
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
-                _QueryBitmap = new Bitmap(Image.FromFile(((string[])e.Data.GetData(DataFormats.FileDrop))[0]));
+                string fileName = TempManager.GetTempFileName();
+                WebClient client = new WebClient();
+                client.DownloadFile(_Flickr.PhotosGetInfo((string)ilvGallery.SelectedItems[0].Tag).LargeUrl, fileName);
+                //_QueryBitmap = new Bitmap(Image.FromFile(((string[])e.Data.GetData(DataFormats.FileDrop))[0]));
+                _QueryBitmap = new Bitmap(Image.FromFile(fileName));
                 tpImgSearch.BackgroundImage = _QueryBitmap;
                 lbDIH1.Visible = false;
             }
@@ -232,18 +194,6 @@ namespace PhotoFinder
                 e.Effect = DragDropEffects.All;
             else
                 e.Effect = DragDropEffects.None;
-        }
-
-        private void sourceToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            FolderBrowserDialog fbd = new FolderBrowserDialog();
-            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK && !String.IsNullOrEmpty(fbd.SelectedPath))
-            {
-                ilvGallery.Items.Clear();
-                PopulateGallery(fbd.SelectedPath);
-
-                _SourceFolderPath = fbd.SelectedPath;
-            }
         }
 
         private void ilvGallery_ItemClick(object sender, Gallery.ItemClickEventArgs e)
@@ -259,7 +209,7 @@ namespace PhotoFinder
                 btnSearchFlickr.Text = "Index Flickr";
                 return;
             }
-
+            ilvGallery.Items.Clear();
             _IsIndexing = true;
             btnSearchFlickr.Text = "Stop Indexing";
             if (String.IsNullOrWhiteSpace(tbFlickrQuery.Text))
@@ -284,25 +234,31 @@ namespace PhotoFinder
                     PhotosEntities photoEntities = new PhotosEntities();
                     foreach (FlickrNet.Photo photo in photoCollection)
                     {
-                        string tempFile = Path.GetTempFileName();
-                        client.DownloadFile(photo.MediumUrl, tempFile);
-                        // insert record to db
-                        FileInfo tmpFileInfo = new FileInfo(tempFile);
-                        Photo dbPhotoEntry = new Photo
+                        string tempFile = TempManager.GetTempFileName();
+                        // check if the photo was indexed before
+                        if (photoEntities.PhotoSet.Count(p => p.PhotoID == photo.PhotoId) > 0)
+                            client.DownloadFile(photo.ThumbnailUrl, tempFile);
+                        else
                         {
-                            PhotoID = photo.PhotoId,
-                            Title = photo.Title,
-                            Url = photo.OriginalUrl,
-                            SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(),
-                            CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(),
-                            //DCD = DescriptorTools.CalculateDescriptor(fi, Descriptor.DCD).BSerialize(),
-                            EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(),
-                            CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(),
-                            FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize()
-                        };
-                        photoEntities.PhotoSet.AddObject(dbPhotoEntry);
-                        photoEntities.SaveChanges();
-                        PopulateGallery(tempFile);
+                            client.DownloadFile(photo.MediumUrl, tempFile);
+                            // insert record to db
+                            FileInfo tmpFileInfo = new FileInfo(tempFile);
+                            Photo dbPhotoEntry = new Photo
+                            {
+                                PhotoID = photo.PhotoId,
+                                Title = photo.Title,
+                                Url = photo.OriginalUrl,
+                                SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(),
+                                CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(),
+                                //DCD = DescriptorTools.CalculateDescriptor(fi, Descriptor.DCD).BSerialize(),
+                                EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(),
+                                CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(),
+                                FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize()
+                            };
+                            photoEntities.PhotoSet.AddObject(dbPhotoEntry);
+                            photoEntities.SaveChanges();
+                        }
+                        PopulateGallery(tempFile, photo.PhotoId);
                         if (!_IsIndexing) return;
                     }
                     btnSearchFlickr.Text = "Index Flickr";
@@ -310,9 +266,16 @@ namespace PhotoFinder
             });
         }
 
-        private void PhotoFinderForm_Load(object sender, EventArgs e)
+        private void tbFlickrQuery_KeyUp(object sender, KeyEventArgs e)
         {
-            _Flickr = new Flickr("135794b7b378a7ecbd10186748d28fb0");
+            if (e.KeyCode == Keys.Enter)
+                btnSearch_Click(this, null);
+        }
+
+        private void PhotoFinderForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ilvGallery.Items.Clear();
+            TempManager.Dispose();
         }
     }
 }
