@@ -11,6 +11,7 @@ using Gallery = Manina.Windows.Forms;
 using FlickrNet;
 using System.Net;
 
+
 namespace PhotoFinder
 {
     public partial class PhotoFinderForm : Form
@@ -34,14 +35,14 @@ namespace PhotoFinder
             try
             {
                 FileInfo file = new FileInfo(path);
-                    if (file.IsImage())
-                    {
-                        Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
-                        ilvi.FileName = file.FullName;
-                        ilvGallery.Items.Add(ilvi);
-                        Application.DoEvents();
-                    }
-                
+                if (file.IsImage())
+                {
+                    Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
+                    ilvi.FileName = file.FullName;
+                    ilvGallery.Items.Add(ilvi);
+                    Application.DoEvents();
+                }
+
             }
             catch (UnauthorizedAccessException)
             {
@@ -91,7 +92,8 @@ namespace PhotoFinder
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
                 //TODO: set multiple descriptors per query
-                SearchInFolder(_SourceFolderPath, GetQuery(_QueryBitmap, desc), desc);
+                //SearchInFolder(_SourceFolderPath, GetQuery(_QueryBitmap, desc), desc);
+                SearchInDatabase(GetQuery(_QueryBitmap, desc), desc);
 
         }
 
@@ -113,6 +115,44 @@ namespace PhotoFinder
             }
 
             return result;
+        }
+
+        private void SearchInDatabase(Dictionary<Descriptor, object> query, Descriptor desc)
+        {
+            if (query != null)
+            {
+                try
+                {
+                    PhotosEntities photoEntities = new PhotosEntities();
+                    
+                    foreach (var entry in photoEntities.PhotoSet)
+                    {
+                            Gallery.ImageListViewItem ilvi = null;
+
+                            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
+                            {
+                                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
+                                {
+                                    double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], entry.GetByIndex(descriptor.ToString()).BDeserialize(), descriptor);
+                                    if (distance >= 0)
+                                    {
+                                        string tmpFileName = Path.GetTempFileName();
+                                        WebClient client = new WebClient();
+                                        client.DownloadFile(entry.Url, tmpFileName);
+                                        GalleryEntryBuilder(new FileInfo(tmpFileName), ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
+                                    }
+                                }
+                            }
+
+                            // after all descriptors touched the file it goes to the gallery
+                            if (ilvi != null) ilvGallery.Items.Add(ilvi);
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // again.. so what.. go go go!
+                }
+            }
         }
 
         /// <summary>
@@ -241,10 +281,27 @@ namespace PhotoFinder
                 {
                     photoCollection = result.Result;
                     WebClient client = new WebClient();
-                    foreach (Photo photo in photoCollection)
+                    PhotosEntities photoEntities = new PhotosEntities();
+                    foreach (FlickrNet.Photo photo in photoCollection)
                     {
                         string tempFile = Path.GetTempFileName();
                         client.DownloadFile(photo.MediumUrl, tempFile);
+                        // insert record to db
+                        FileInfo tmpFileInfo = new FileInfo(tempFile);
+                        Photo dbPhotoEntry = new Photo
+                        {
+                            PhotoID = photo.PhotoId,
+                            Title = photo.Title,
+                            Url = photo.OriginalUrl,
+                            SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(),
+                            CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(),
+                            //DCD = DescriptorTools.CalculateDescriptor(fi, Descriptor.DCD).BSerialize(),
+                            EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(),
+                            CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(),
+                            FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize()
+                        };
+                        photoEntities.PhotoSet.AddObject(dbPhotoEntry);
+                        photoEntities.SaveChanges();
                         PopulateGallery(tempFile);
                         if (!_IsIndexing) return;
                     }

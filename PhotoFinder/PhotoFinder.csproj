@@ -79,10 +79,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="dbModel.Designer.cs">
+    <Compile Include="PhotoModel.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
-      <DependentUpon>dbModel.edmx</DependentUpon>
+      <DependentUpon>PhotoModel.edmx</DependentUpon>
     </Compile>
     <Compile Include="Descriptor.cs" />
     <Compile Include="DescriptorTools.cs" />
@@ -108,9 +108,9 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EntityDeploy Include="dbModel.edmx">
+    <EntityDeploy Include="PhotoModel.edmx">
       <Generator>EntityModelCodeGenerator</Generator>
-      <LastGenOutput>dbModel.Designer.cs</LastGenOutput>
+      <LastGenOutput>PhotoModel.Designer.cs</LastGenOutput>
     </EntityDeploy>
     <None Include="App.Config">
       <SubType>Designer</SubType>
