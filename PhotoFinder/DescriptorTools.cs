@@ -55,7 +55,11 @@ namespace PhotoFinder
         }
 
         /// <summary>
-        /// Calculating CEDD deviation using Tonimoto Classifier
+        /// Calculating FCTH, Fuzzy Color and Texture Histogram
+        /// FCTH podzieli obraz na dwie czesci. Pierwsza czesc rozmyty kolor a druga czesc to histogram tla, dla pierwszej czesci 
+        /// obraz zostanie dotaktowo podzielony na HSV (barwa, nasycanie, wartosc). Dla kanalu H obraz dzieli sie na 8 czesci (kolorow).
+        /// Kanal S na dwie czesci zas V jest dzielony na 3 rejony.
+        /// Druga czesc deskryptora to dzielony na 8 regionow obraz, ktory zawiera 24 podregiony czyli w sumie to 192 individualny paki czyli tzw. bins
         /// </summary>
         /// <param name="histogramA"></param>
         /// <param name="histogramB"></param>
@@ -155,7 +159,7 @@ namespace PhotoFinder
         #region EHD
 
         private static double[,] QuantTable =
-            {{0.010867, 0.057915, 0.099526, 0.144849, 0.195573, 0.260504, 0.358031, 0.530128},
+                    {{0.010867, 0.057915, 0.099526, 0.144849, 0.195573, 0.260504, 0.358031, 0.530128},
                     {0.012266, 0.069934, 0.125879, 0.182307, 0.243396, 0.314563, 0.411728, 0.564319},
                     {0.004193, 0.025852, 0.046860, 0.068519, 0.093286, 0.123490, 0.161505, 0.228960},
                     {0.004174, 0.025924, 0.046232, 0.067163, 0.089655, 0.115391, 0.151904, 0.217745},
