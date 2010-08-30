@@ -204,22 +204,20 @@ namespace PhotoFinder
 
 
         
-       // int[] ZrodloYCDL = new int[6];
-       // int[] ZrodloCbCDL = new int[3];
-       // int[] ZrodloCrCDL = new int[3];
+       
        
 
-        public static double[,] PoliczCLD(FileInfo image)
+        public static int[,] PoliczCLD(FileInfo image)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
             return PoliczCLD(bitmap);
         }
 
-        public static double[,] PoliczCLD(Bitmap bitmap)
+        public static int[,] PoliczCLD(Bitmap bitmap)
         {
             CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
 
-            double[,] temp= new double[3,64];
+            int[,] temp= new int[3,64];
 
             Mpeg7CLD.Apply(bitmap);
             for (int h = 0;h <64; h++)
@@ -320,8 +318,6 @@ namespace PhotoFinder
             switch (descriptor)
             {
                 case Descriptor.CLD:
-                    
- 
                     result = PoliczCLD(_QueryBitmap);
                     break;
                 case Descriptor.DCD:
