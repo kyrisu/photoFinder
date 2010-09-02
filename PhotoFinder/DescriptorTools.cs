@@ -158,7 +158,7 @@ namespace PhotoFinder
 
         #region EHD
 
-        private static double[,] QuantTable =
+        private static double[,] QuantTable =//kwantyzacja jest potrzebna poneiwaz wiekszosc wartosci w wektorze EHD jest bardzo ma³a
                     {{0.010867, 0.057915, 0.099526, 0.144849, 0.195573, 0.260504, 0.358031, 0.530128},
                     {0.012266, 0.069934, 0.125879, 0.182307, 0.243396, 0.314563, 0.411728, 0.564319},
                     {0.004193, 0.025852, 0.046860, 0.068519, 0.093286, 0.123490, 0.161505, 0.228960},
@@ -166,20 +166,49 @@ namespace PhotoFinder
                     {0.006778, 0.051667, 0.108650, 0.166257, 0.224226, 0.285691, 0.356375, 0.450972}};
         protected static int[,] weightMatrix = new int[3, 64];
 
+        /// <summary>
+        /// Przeciazenie funkcji PoliczEHD(Bitmap bitmap)
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
         public static double[] PoliczEHD(FileInfo image)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
             return PoliczEHD(bitmap);
         }
-
+        /// <summary>
+        /// Funkcja liczaca wektor 80 wartosci krawedzi dla brazka Bitmap, obrazek jest dzielony na 16 podobrazkow 
+        /// dla kazdego z nich wyznaczane jest 5 wartosci, funkcja wykorzystuje biblioteke EHD.dll
+        /// </summary>
+        /// <param name="bitmap">
+        /// bitmap to obrazek ktory bedzie analizowany
+        /// </param>
+        /// <returns>
+        /// Funkcja zwraca 80 elementowa tablice int zawierajaca, 
+        /// znormalizowan¹ instesywnosc wystapien poszczególnych, 
+        /// krawêdzi w 16 podobrazach na które podzielona jest bitmap
+        /// </returns>
         public static double[] PoliczEHD(Bitmap bitmap)
         {
             EHD_Descriptor Mpeg7EHD = new EHD_Descriptor(11);
-            double[] SourceEHDTable = new double[80];
-            SourceEHDTable = Mpeg7EHD.Apply(bitmap);
-            return SourceEHDTable;
+            double[] SourceEHDTable = new double[80];//tablica trzymajaca wartosci deskryptora dla 16 pod obrazwo 
+            SourceEHDTable = Mpeg7EHD.Apply(bitmap); //na ktore podzielony jest obraz glowny
+            return SourceEHDTable;                   //kazdy podobraz ma 5 wartosci dla kazdego typu krawedzi   
         }
-
+        /// <summary>
+        /// Funkcja obliczajaca odleglosc miedzy dwoma deskryptorami EHD,
+        /// Odleg³oœæ miêdzy obrazkami oblicza siê sumuj¹c ró¿nice wartoœci 
+        /// odpowiadaj¹cych sobie pozycji w wektorach wartoœci deskryptora 
+        /// </summary>
+        /// <param name="oEHD1">
+        /// 80 elementowa tablica double zawierajaca wartosci deskrptora dla pierwszego obrazka
+        /// </param>
+        /// <param name="oEHD2">
+        /// 80 elementowa tablica double zawierajaca wartosci deskrptora dla drugiego obrazka
+        /// </param>
+        /// <returns>
+        /// odlegosc miedzy deskryptorami
+        /// </returns>
         public static double PoliczOdlegloscEHD(object oEHD1, object oEHD2)
         {
             double[] EHD1 = (double[])oEHD1;
@@ -210,13 +239,26 @@ namespace PhotoFinder
         
        
        
-
+        /// <summary>
+        /// Przeciazenie funkcji PoliczCLD(Bitmap bitmap)
+        /// </summary>
+        /// <param name="image"></param>
+        /// <returns></returns>
         public static int[,] PoliczCLD(FileInfo image)
         {
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
             return PoliczCLD(bitmap);
         }
-
+        /// <summary>
+        /// Funkcja liczaca wartosci deskryptora CLD dla obrazka bitmap, 
+        /// </summary>
+        /// <param name="bitmap">
+        /// obrazek na ktorym zostanie zastosowany deskryptor
+        /// </param>
+        /// <returns>
+        /// trojwymiarowa tablica zawierajca wartosci skladowej luminancji, skladowej roznicowa, 
+        /// skladowej chrominancji dlakazdego z 64 obszaro na ktory podzielona jest bitmap
+        /// </returns>
         public static int[,] PoliczCLD(Bitmap bitmap)
         {
             CLD_Descriptor Mpeg7CLD = new CLD_Descriptor();
@@ -234,7 +276,7 @@ namespace PhotoFinder
             return temp;
         }
 
-        private static void setWeightingValues()
+        private static void setWeightingValues()//Tablica wag wykorzystywana do porownywania deskryptorow, 
         {
             weightMatrix[0, 0] = 2;
             weightMatrix[0, 1] = weightMatrix[0, 2] = 2;
@@ -248,7 +290,18 @@ namespace PhotoFinder
                     weightMatrix[i, j] = 1;
             }
         }
-
+        /// <summary>
+        /// Funkcja liczaca oblegosc miedzy dwama deskryptorami CLD
+        /// </summary>
+        /// <param name="oCLD1">
+        /// Wartosc CLD dla pierwszego obrazka
+        /// </param>
+        /// <param name="oCLD2">
+        /// Wartosc CLD dld drugiego obrazka
+        /// </param>
+        /// <returns>
+        /// Odlegloscmeidzy deskryptorami
+        /// </returns>
         public static double policzodlegloscCLD( object oCLD1, object oCLD2)
         {
             int[,] CLD1 = (int[,])oCLD1;
@@ -271,12 +324,12 @@ namespace PhotoFinder
 
             }
             int numYCoeff1, numYCoeff2, CCoeff1, CCoeff2, YCoeff, CCoeff;
-            //Numbers of the Coefficients of two descriptor values.
+            
             numYCoeff1 = YCoeff1.Length;
             numYCoeff2 = YCoeff2.Length;
             CCoeff1 = CbCoeff1.Length;
             CCoeff2 = CbCoeff2.Length;
-            //take the Minimal Coeff-number
+            
             YCoeff = Math.Min(numYCoeff1, numYCoeff2);
             CCoeff = Math.Min(CCoeff1, CCoeff2);
             setWeightingValues();
@@ -301,7 +354,7 @@ namespace PhotoFinder
                 diff = (CrCoeff1[j] - CrCoeff2[j]);
                 sum[2] += (weightMatrix[2, j] * diff * diff);
             }
-            //returns the distance between the two desciptor values
+            
             return Math.Sqrt(sum[0] * 1.0) + Math.Sqrt(sum[1] * 1.0) + Math.Sqrt(sum[2] * 1.0);
         }
 
