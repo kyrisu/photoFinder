@@ -257,7 +257,7 @@ namespace PhotoFinder
             }
             PhotoSearchOptions searchOptions = new PhotoSearchOptions();
             searchOptions.Tags = tbFlickrQuery.Text;
-            searchOptions.PerPage = 200;
+            searchOptions.PerPage = 100;
             searchOptions.SortOrder = PhotoSearchSortOrder.Relevance;
             // there is a function called PhotoSearchAsync - unfortunately it blocked the gui for some reason.
             // using ThreadPool makes the app more responsive
@@ -273,22 +273,37 @@ namespace PhotoFinder
             foreach (FlickrNet.Photo photo in photoCollection)
             {
                 _PhotoIdList.Add(photo.PhotoId);
-                //string tempFile = TempManager.GetTempFileName();
                 string tempFile = Path.Combine(_FolderPath, photo.PhotoId + ".jpg");
-                // check if the photo was indexed before
+                // check if the photo was not indexed before
                 if (photoEntities.PhotoSet.Count(p => p.PhotoID == photo.PhotoId) < 1)
                 {
                     if (!File.Exists(tempFile))
                         client.DownloadFile(photo.MediumUrl, tempFile);
                     // insert record to db
                     FileInfo tmpFileInfo = new FileInfo(tempFile);
-                    Photo dbPhotoEntry = new Photo { PhotoID = photo.PhotoId, Title = photo.Title, UrlThumbnail = photo.ThumbnailUrl, UrlMedium = photo.MediumUrl, UrlLarge = photo.LargeUrl, ImagePath = tempFile, SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(), CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(), EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(), CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(), FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize() };
+                    // it happened one and got the app crashed .. so just in case
+                    if (tmpFileInfo.Length == 0) continue;
+                    Photo dbPhotoEntry = new Photo { 
+                        PhotoID = photo.PhotoId, 
+                        Title = photo.Title, 
+                        UrlThumbnail = photo.ThumbnailUrl, 
+                        UrlMedium = photo.MediumUrl, 
+                        UrlLarge = photo.LargeUrl, 
+                        ImagePath = tempFile, 
+                        SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(), 
+                        CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(), 
+                        EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(), 
+                        CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(), 
+                        FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize() };
                     photoEntities.PhotoSet.AddObject(dbPhotoEntry);
-                    photoEntities.SaveChanges();
                 }
                 PopulateGallery(tempFile, photo);
                 if (!_IsIndexing)
+                {
+                    photoEntities.SaveChanges();
                     return;
+                }
+                   
             }
             if (btnSearchFlickr.InvokeRequired)
             {
@@ -299,12 +314,13 @@ namespace PhotoFinder
                 btnSearchFlickr.Text = "Index Flickr";
             }
             _IsIndexing = false;
+            photoEntities.SaveChanges();
         }
 
         private void tbFlickrQuery_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter)
-                btnSearch_Click(this, null);
+                btnSearchFlickr_Click(this, null);
         }
 
         private void PhotoFinderForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -404,7 +420,10 @@ namespace PhotoFinder
             }
             // we need to prevent reloading of the gallery after select, we will use bool trigger for this
             _RefreshGallery = false;
-            cbxSort.SelectedItem = Regex.Match((string)clbDescriptorsList.SelectedItem, @"([A-Z]{1,4})").Groups[0].ToString();
+            if(clbDescriptorsList.GetItemChecked(clbDescriptorsList.SelectedIndex))
+                cbxSort.SelectedItem = Regex.Match((string)clbDescriptorsList.SelectedItem, @"([A-Z]{1,4})").Groups[0].ToString();
+            else
+                cbxSort.SelectedItem = Regex.Match((string)clbDescriptorsList.CheckedItems[0], @"([A-Z]{1,4})").Groups[0].ToString();
         }
 
         private void rbAsc_CheckedChanged(object sender, EventArgs e)
