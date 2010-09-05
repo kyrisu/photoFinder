@@ -241,7 +241,8 @@ namespace PhotoFinder
             }
             PhotoSearchOptions searchOptions = new PhotoSearchOptions();
             searchOptions.Tags = tbFlickrQuery.Text;
-            searchOptions.PerPage = 100;
+            searchOptions.PerPage = 200;
+            searchOptions.SortOrder = PhotoSearchSortOrder.Relevance;
 
             _Flickr.PhotosSearchAsync(searchOptions, SearchAsyncFinished);
         }
@@ -266,18 +267,20 @@ namespace PhotoFinder
                     // check if the photo was indexed before
                     if (photoEntities.PhotoSet.Count(p => p.PhotoID == photo.PhotoId) < 1)
                     {
-                        client.DownloadFile(photo.MediumUrl, tempFile);
+                        if(!File.Exists(tempFile))
+                            client.DownloadFile(photo.MediumUrl, tempFile);
                         // insert record to db
                         FileInfo tmpFileInfo = new FileInfo(tempFile);
                         Photo dbPhotoEntry = new Photo { PhotoID = photo.PhotoId, Title = photo.Title, UrlThumbnail = photo.ThumbnailUrl, UrlMedium = photo.MediumUrl, UrlLarge = photo.LargeUrl, ImagePath = tempFile, SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(), CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(), EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(), CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(), FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize() };
                         photoEntities.PhotoSet.AddObject(dbPhotoEntry);
                         photoEntities.SaveChanges();
-                    }
+                    }           
                     PopulateGallery(tempFile, photo);
                     if (!_IsIndexing)
                         return;
                 }
                 btnSearchFlickr.Text = "Index Flickr";
+                _IsIndexing = false;
             }
         }
 
@@ -299,10 +302,13 @@ namespace PhotoFinder
             {
                 WebClient client = new WebClient();
                 SaveFileDialog saveFileDialog = new SaveFileDialog();
-                FlickrNet.PhotoInfo photo = _Flickr.PhotosGetInfo((string)ilvGallery.SelectedItems[0].Tag);
-                String path = (new Uri(photo.MediumUrl)).LocalPath;
+                FlickrNet.PhotoInfo photo = _Flickr.PhotosGetInfo(((ImageInfo)ilvGallery.SelectedItems[0].Tag).PhotoID);
+                String path = (new Uri(photo.LargeUrl)).LocalPath;
                 saveFileDialog.FileName = Path.GetFileName(path);
                 saveFileDialog.DefaultExt = Path.GetExtension(path);
+
+                // this switch was designed to support downloading images using original image url
+                // which may point to a file with extension different thatn .jpg
                 switch (saveFileDialog.DefaultExt)
                 {
                     case "jpg":
@@ -321,7 +327,7 @@ namespace PhotoFinder
                 saveFileDialog.Filter += "|All Files (*.*)|*.*";
                 if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    client.DownloadFile(photo.MediumUrl, saveFileDialog.FileName);
+                    client.DownloadFile(photo.LargeUrl, saveFileDialog.FileName);
                 }
             }
         }
