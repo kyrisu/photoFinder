@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Manina.Windows.Forms.ImageListViewColor imageListViewColor1 = new Manina.Windows.Forms.ImageListViewColor();
+            Manina.Windows.Forms.ImageListViewColor imageListViewColor3 = new Manina.Windows.Forms.ImageListViewColor();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhotoFinderForm));
             this.tcSearch = new System.Windows.Forms.TabControl();
             this.tpImgSearch = new System.Windows.Forms.TabPage();
             this.lbDIH1 = new System.Windows.Forms.Label();
             this.tpParmSearch = new System.Windows.Forms.TabPage();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.tpSaveBox = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.ilvGallery = new Manina.Windows.Forms.ImageListView();
@@ -46,11 +46,17 @@
             this.lblDescriptorsDetails = new System.Windows.Forms.Label();
             this.tbFlickrQuery = new System.Windows.Forms.TextBox();
             this.btnSearchFlickr = new System.Windows.Forms.Button();
+            this.cbxSort = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.pSort = new System.Windows.Forms.Panel();
+            this.rbDesc = new System.Windows.Forms.RadioButton();
+            this.rbAsc = new System.Windows.Forms.RadioButton();
             this.tcSearch.SuspendLayout();
             this.tpImgSearch.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.tpSaveBox.SuspendLayout();
             this.panel1.SuspendLayout();
             this.gbImgDetails.SuspendLayout();
+            this.pSort.SuspendLayout();
             this.SuspendLayout();
             // 
             // tcSearch
@@ -98,14 +104,16 @@
             this.tpParmSearch.Text = "Parametric Search";
             this.tpParmSearch.UseVisualStyleBackColor = true;
             // 
-            // groupBox1
+            // tpSaveBox
             // 
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Location = new System.Drawing.Point(16, 344);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(217, 124);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
+            this.tpSaveBox.Controls.Add(this.label1);
+            this.tpSaveBox.Location = new System.Drawing.Point(16, 353);
+            this.tpSaveBox.Name = "tpSaveBox";
+            this.tpSaveBox.Size = new System.Drawing.Size(217, 124);
+            this.tpSaveBox.TabIndex = 1;
+            this.tpSaveBox.TabStop = false;
+            this.tpSaveBox.DragDrop += new System.Windows.Forms.DragEventHandler(this.tpSaveBox_DragDrop);
+            this.tpSaveBox.DragEnter += new System.Windows.Forms.DragEventHandler(this.tpSaveBox_DragEnter);
             // 
             // label1
             // 
@@ -131,37 +139,37 @@
             // ilvGallery
             // 
             this.ilvGallery.AllowDrag = true;
-            imageListViewColor1.BackColor = System.Drawing.SystemColors.Window;
-            imageListViewColor1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.CellForeColor = System.Drawing.SystemColors.ControlText;
-            imageListViewColor1.ColumnHeaderBackColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            imageListViewColor1.ColumnHeaderBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            imageListViewColor1.ColumnHeaderForeColor = System.Drawing.SystemColors.WindowText;
-            imageListViewColor1.ColumnHeaderHoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ColumnHeaderHoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ColumnSelectColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.ColumnSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.ControlBackColor = System.Drawing.SystemColors.Window;
-            imageListViewColor1.ForeColor = System.Drawing.SystemColors.ControlText;
-            imageListViewColor1.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.HoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.HoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ImageInnerBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ImageOuterBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            imageListViewColor1.InsertionCaretColor = System.Drawing.SystemColors.Highlight;
-            imageListViewColor1.PaneBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.PaneLabelColor = System.Drawing.SystemColors.GrayText;
-            imageListViewColor1.PaneSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.SelectedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectionRectangleBorderColor = System.Drawing.SystemColors.Highlight;
-            imageListViewColor1.SelectionRectangleColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectionRectangleColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.UnFocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.UnFocusedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.UnFocusedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.ilvGallery.Colors = imageListViewColor1;
+            imageListViewColor3.BackColor = System.Drawing.SystemColors.Window;
+            imageListViewColor3.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.CellForeColor = System.Drawing.SystemColors.ControlText;
+            imageListViewColor3.ColumnHeaderBackColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            imageListViewColor3.ColumnHeaderBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            imageListViewColor3.ColumnHeaderForeColor = System.Drawing.SystemColors.WindowText;
+            imageListViewColor3.ColumnHeaderHoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.ColumnHeaderHoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.ColumnSelectColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.ColumnSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.ControlBackColor = System.Drawing.SystemColors.Window;
+            imageListViewColor3.ForeColor = System.Drawing.SystemColors.ControlText;
+            imageListViewColor3.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.HoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.HoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.ImageInnerBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            imageListViewColor3.ImageOuterBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            imageListViewColor3.InsertionCaretColor = System.Drawing.SystemColors.Highlight;
+            imageListViewColor3.PaneBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.PaneLabelColor = System.Drawing.SystemColors.GrayText;
+            imageListViewColor3.PaneSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.SelectedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.SelectedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.SelectedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.SelectionRectangleBorderColor = System.Drawing.SystemColors.Highlight;
+            imageListViewColor3.SelectionRectangleColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.SelectionRectangleColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor3.UnFocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.UnFocusedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor3.UnFocusedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.ilvGallery.Colors = imageListViewColor3;
             this.ilvGallery.DefaultImage = ((System.Drawing.Image)(resources.GetObject("ilvGallery.DefaultImage")));
             this.ilvGallery.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ilvGallery.ErrorImage = ((System.Drawing.Image)(resources.GetObject("ilvGallery.ErrorImage")));
@@ -190,7 +198,6 @@
             this.clbDescriptorsList.Items.AddRange(new object[] {
             "(SCD) Scalable Color",
             "(CLD) Color Layout",
-            "(DCD) Dominant Color",
             "(EHD) Edge Histogram",
             "(CEDD) Color and Edge Directivity Desc.",
             "(FCTH) Fuzzy Color and Texture Hist."});
@@ -254,32 +261,87 @@
             this.btnSearchFlickr.UseVisualStyleBackColor = true;
             this.btnSearchFlickr.Click += new System.EventHandler(this.btnSearchFlickr_Click);
             // 
+            // cbxSort
+            // 
+            this.cbxSort.FormattingEnabled = true;
+            this.cbxSort.Location = new System.Drawing.Point(817, 3);
+            this.cbxSort.Name = "cbxSort";
+            this.cbxSort.Size = new System.Drawing.Size(99, 21);
+            this.cbxSort.TabIndex = 9;
+            this.cbxSort.SelectedIndexChanged += new System.EventHandler(this.cbxSort_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(767, 6);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Sort By:";
+            // 
+            // pSort
+            // 
+            this.pSort.Controls.Add(this.rbDesc);
+            this.pSort.Controls.Add(this.rbAsc);
+            this.pSort.Location = new System.Drawing.Point(922, 4);
+            this.pSort.Name = "pSort";
+            this.pSort.Size = new System.Drawing.Size(111, 20);
+            this.pSort.TabIndex = 11;
+            // 
+            // rbDesc
+            // 
+            this.rbDesc.AutoSize = true;
+            this.rbDesc.Location = new System.Drawing.Point(54, 1);
+            this.rbDesc.Name = "rbDesc";
+            this.rbDesc.Size = new System.Drawing.Size(50, 17);
+            this.rbDesc.TabIndex = 1;
+            this.rbDesc.TabStop = true;
+            this.rbDesc.Text = "Desc";
+            this.rbDesc.UseVisualStyleBackColor = true;
+            // 
+            // rbAsc
+            // 
+            this.rbAsc.AutoSize = true;
+            this.rbAsc.Location = new System.Drawing.Point(4, 1);
+            this.rbAsc.Name = "rbAsc";
+            this.rbAsc.Size = new System.Drawing.Size(43, 17);
+            this.rbAsc.TabIndex = 0;
+            this.rbAsc.TabStop = true;
+            this.rbAsc.Text = "Asc";
+            this.rbAsc.UseVisualStyleBackColor = true;
+            // 
             // PhotoFinderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1045, 480);
+            this.Controls.Add(this.pSort);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbxSort);
             this.Controls.Add(this.btnSearchFlickr);
             this.Controls.Add(this.tbFlickrQuery);
             this.Controls.Add(this.gbImgDetails);
             this.Controls.Add(this.btnSearch);
             this.Controls.Add(this.clbDescriptorsList);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.groupBox1);
+            this.Controls.Add(this.tpSaveBox);
             this.Controls.Add(this.tcSearch);
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "PhotoFinderForm";
             this.Text = "PhotoFinder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.PhotoFinderForm_FormClosing);
+            this.Load += new System.EventHandler(this.PhotoFinderForm_Load);
             this.tcSearch.ResumeLayout(false);
             this.tpImgSearch.ResumeLayout(false);
             this.tpImgSearch.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.tpSaveBox.ResumeLayout(false);
+            this.tpSaveBox.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.gbImgDetails.ResumeLayout(false);
             this.gbImgDetails.PerformLayout();
+            this.pSort.ResumeLayout(false);
+            this.pSort.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -290,7 +352,7 @@
         private System.Windows.Forms.TabControl tcSearch;
         private System.Windows.Forms.TabPage tpImgSearch;
         private System.Windows.Forms.TabPage tpParmSearch;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox tpSaveBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label lbDIH1;
@@ -303,6 +365,11 @@
         private System.Windows.Forms.Label lblDescriptorsDetails;
         private System.Windows.Forms.TextBox tbFlickrQuery;
         private System.Windows.Forms.Button btnSearchFlickr;
+        private System.Windows.Forms.ComboBox cbxSort;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Panel pSort;
+        private System.Windows.Forms.RadioButton rbDesc;
+        private System.Windows.Forms.RadioButton rbAsc;
     }
 }
 

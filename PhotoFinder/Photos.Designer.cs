@@ -16,11 +16,6 @@ using System.Xml.Serialization;
 using System.Runtime.Serialization;
 
 [assembly: EdmSchemaAttribute()]
-#region EDM Relationship Metadata
-
-[assembly: EdmRelationshipAttribute("PhotosModel", "Tags", "Photo", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(PhotoFinder.Photo), "Tag", System.Data.Metadata.Edm.RelationshipMultiplicity.Many, typeof(PhotoFinder.Tag))]
-
-#endregion
 
 namespace PhotoFinder
 {
@@ -85,22 +80,6 @@ namespace PhotoFinder
             }
         }
         private ObjectSet<Photo> _PhotoSet;
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        public ObjectSet<Tag> TagSet
-        {
-            get
-            {
-                if ((_TagSet == null))
-                {
-                    _TagSet = base.CreateObjectSet<Tag>("TagSet");
-                }
-                return _TagSet;
-            }
-        }
-        private ObjectSet<Tag> _TagSet;
 
         #endregion
         #region AddTo Methods
@@ -111,14 +90,6 @@ namespace PhotoFinder
         public void AddToPhotoSet(Photo photo)
         {
             base.AddObject("PhotoSet", photo);
-        }
-    
-        /// <summary>
-        /// Deprecated Method for adding a new object to the TagSet EntitySet. Consider using the .Add method of the associated ObjectSet&lt;T&gt; property instead.
-        /// </summary>
-        public void AddToTagSet(Tag tag)
-        {
-            base.AddObject("TagSet", tag);
         }
 
         #endregion
@@ -221,24 +192,24 @@ namespace PhotoFinder
         /// </summary>
         [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.String Url
+        public global::System.String UrlThumbnail
         {
             get
             {
-                return _Url;
+                return _UrlThumbnail;
             }
             set
             {
-                OnUrlChanging(value);
-                ReportPropertyChanging("Url");
-                _Url = StructuralObject.SetValidValue(value, true);
-                ReportPropertyChanged("Url");
-                OnUrlChanged();
+                OnUrlThumbnailChanging(value);
+                ReportPropertyChanging("UrlThumbnail");
+                _UrlThumbnail = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("UrlThumbnail");
+                OnUrlThumbnailChanged();
             }
         }
-        private global::System.String _Url;
-        partial void OnUrlChanging(global::System.String value);
-        partial void OnUrlChanged();
+        private global::System.String _UrlThumbnail;
+        partial void OnUrlThumbnailChanging(global::System.String value);
+        partial void OnUrlThumbnailChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
@@ -383,140 +354,81 @@ namespace PhotoFinder
         private global::System.Byte[] _FCTH;
         partial void OnFCTHChanging(global::System.Byte[] value);
         partial void OnFCTHChanged();
-
-        #endregion
-    
-        #region Navigation Properties
     
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("PhotosModel", "Tags", "Tag")]
-        public EntityCollection<Tag> Tags
+        public global::System.String UrlMedium
         {
             get
             {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Tag>("PhotosModel.Tags", "Tag");
+                return _UrlMedium;
             }
             set
             {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Tag>("PhotosModel.Tags", "Tag", value);
-                }
+                OnUrlMediumChanging(value);
+                ReportPropertyChanging("UrlMedium");
+                _UrlMedium = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("UrlMedium");
+                OnUrlMediumChanged();
             }
         }
-
-        #endregion
-    }
-    
-    /// <summary>
-    /// No Metadata Documentation available.
-    /// </summary>
-    [EdmEntityTypeAttribute(NamespaceName="PhotosModel", Name="Tag")]
-    [Serializable()]
-    [DataContractAttribute(IsReference=true)]
-    public partial class Tag : EntityObject
-    {
-        #region Factory Method
-    
-        /// <summary>
-        /// Create a new Tag object.
-        /// </summary>
-        /// <param name="id">Initial value of the Id property.</param>
-        /// <param name="name">Initial value of the Name property.</param>
-        public static Tag CreateTag(global::System.Int32 id, global::System.String name)
-        {
-            Tag tag = new Tag();
-            tag.Id = id;
-            tag.Name = name;
-            return tag;
-        }
-
-        #endregion
-        #region Primitive Properties
+        private global::System.String _UrlMedium;
+        partial void OnUrlMediumChanging(global::System.String value);
+        partial void OnUrlMediumChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=true, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.Int32 Id
+        public global::System.String UrlLarge
         {
             get
             {
-                return _Id;
+                return _UrlLarge;
             }
             set
             {
-                if (_Id != value)
-                {
-                    OnIdChanging(value);
-                    ReportPropertyChanging("Id");
-                    _Id = StructuralObject.SetValidValue(value);
-                    ReportPropertyChanged("Id");
-                    OnIdChanged();
-                }
+                OnUrlLargeChanging(value);
+                ReportPropertyChanging("UrlLarge");
+                _UrlLarge = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("UrlLarge");
+                OnUrlLargeChanged();
             }
         }
-        private global::System.Int32 _Id;
-        partial void OnIdChanging(global::System.Int32 value);
-        partial void OnIdChanged();
+        private global::System.String _UrlLarge;
+        partial void OnUrlLargeChanging(global::System.String value);
+        partial void OnUrlLargeChanged();
     
         /// <summary>
         /// No Metadata Documentation available.
         /// </summary>
-        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=false)]
+        [EdmScalarPropertyAttribute(EntityKeyProperty=false, IsNullable=true)]
         [DataMemberAttribute()]
-        public global::System.String Name
+        public global::System.String ImagePath
         {
             get
             {
-                return _Name;
+                return _ImagePath;
             }
             set
             {
-                OnNameChanging(value);
-                ReportPropertyChanging("Name");
-                _Name = StructuralObject.SetValidValue(value, false);
-                ReportPropertyChanged("Name");
-                OnNameChanged();
+                OnImagePathChanging(value);
+                ReportPropertyChanging("ImagePath");
+                _ImagePath = StructuralObject.SetValidValue(value, true);
+                ReportPropertyChanged("ImagePath");
+                OnImagePathChanged();
             }
         }
-        private global::System.String _Name;
-        partial void OnNameChanging(global::System.String value);
-        partial void OnNameChanged();
+        private global::System.String _ImagePath;
+        partial void OnImagePathChanging(global::System.String value);
+        partial void OnImagePathChanged();
 
         #endregion
     
-        #region Navigation Properties
-    
-        /// <summary>
-        /// No Metadata Documentation available.
-        /// </summary>
-        [XmlIgnoreAttribute()]
-        [SoapIgnoreAttribute()]
-        [DataMemberAttribute()]
-        [EdmRelationshipNavigationPropertyAttribute("PhotosModel", "Tags", "Photo")]
-        public EntityCollection<Photo> Photos
-        {
-            get
-            {
-                return ((IEntityWithRelationships)this).RelationshipManager.GetRelatedCollection<Photo>("PhotosModel.Tags", "Photo");
-            }
-            set
-            {
-                if ((value != null))
-                {
-                    ((IEntityWithRelationships)this).RelationshipManager.InitializeRelatedCollection<Photo>("PhotosModel.Tags", "Photo", value);
-                }
-            }
-        }
-
-        #endregion
     }
 
     #endregion

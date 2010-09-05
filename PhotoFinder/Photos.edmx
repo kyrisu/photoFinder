@@ -7,16 +7,6 @@
     <Schema Namespace="PhotosModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.3.5" ProviderManifestToken="3.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
   <EntityContainer Name="PhotosModelStoreContainer">
     <EntitySet Name="PhotoSet" EntityType="PhotosModel.Store.PhotoSet" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="TagSet" EntityType="PhotosModel.Store.TagSet" store:Type="Tables" Schema="dbo" />
-    <EntitySet Name="Tags" EntityType="PhotosModel.Store.Tags" store:Type="Tables" Schema="dbo" />
-    <AssociationSet Name="FK_Tags_Photo" Association="PhotosModel.Store.FK_Tags_Photo">
-      <End Role="Photo" EntitySet="PhotoSet" />
-      <End Role="Tags" EntitySet="Tags" />
-    </AssociationSet>
-    <AssociationSet Name="FK_Tags_Tag" Association="PhotosModel.Store.FK_Tags_Tag">
-      <End Role="Tag" EntitySet="TagSet" />
-      <End Role="Tags" EntitySet="Tags" />
-    </AssociationSet>
   </EntityContainer>
   <EntityType Name="PhotoSet">
     <Key>
@@ -24,64 +14,23 @@
     </Key>
     <Property Name="PhotoID" Type="nvarchar" Nullable="false" />
     <Property Name="Title" Type="nvarchar" Nullable="false" />
-    <Property Name="Url" Type="nvarchar" Nullable="true" />
+    <Property Name="UrlThumbnail" Type="nvarchar" Nullable="true" />
     <Property Name="SCD" Type="varbinary" Nullable="false" />
     <Property Name="CLD" Type="varbinary" Nullable="false" />
     <Property Name="DCD" Type="varbinary" Nullable="true" />
     <Property Name="EHD" Type="varbinary" Nullable="false" />
     <Property Name="CEDD" Type="varbinary" Nullable="false" />
     <Property Name="FCTH" Type="varbinary" Nullable="false" />
+    <Property Name="UrlMedium" Type="nvarchar" Nullable="true" />
+    <Property Name="UrlLarge" Type="nvarchar" Nullable="true" />
+    <Property Name="ImagePath" Type="nvarchar" Nullable="true" />
   </EntityType>
-  <EntityType Name="TagSet">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="int" Nullable="false" />
-    <Property Name="Name" Type="nvarchar" Nullable="false" />
-  </EntityType>
-  <EntityType Name="Tags">
-    <Key>
-      <PropertyRef Name="Photos_PhotoID" />
-      <PropertyRef Name="Tags_Id" />
-    </Key>
-    <Property Name="Photos_PhotoID" Type="nvarchar" Nullable="false" />
-    <Property Name="Tags_Id" Type="int" Nullable="false" />
-  </EntityType>
-  <Association Name="FK_Tags_Photo">
-    <End Role="Photo" Type="PhotosModel.Store.PhotoSet" Multiplicity="1" />
-    <End Role="Tags" Type="PhotosModel.Store.Tags" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Photo">
-        <PropertyRef Name="PhotoID" />
-      </Principal>
-      <Dependent Role="Tags">
-        <PropertyRef Name="Photos_PhotoID" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <Association Name="FK_Tags_Tag">
-    <End Role="Tags" Type="PhotosModel.Store.Tags" Multiplicity="*" />
-    <End Role="Tag" Type="PhotosModel.Store.TagSet" Multiplicity="1" />
-    <ReferentialConstraint>
-      <Principal Role="Tag">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Tags">
-        <PropertyRef Name="Tags_Id" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
 </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="PhotosModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
         <EntityContainer Name="PhotosEntities" annotation:LazyLoadingEnabled="true" >
           <EntitySet Name="PhotoSet" EntityType="PhotosModel.Photo" />
-          <EntitySet Name="TagSet" EntityType="PhotosModel.Tag" />
-          <AssociationSet Name="Tags" Association="PhotosModel.Tags">
-            <End Role="Photo" EntitySet="PhotoSet" />
-            <End Role="Tag" EntitySet="TagSet" />
-          </AssociationSet>
         </EntityContainer>
         <EntityType Name="Photo">
           <Key>
@@ -89,27 +38,17 @@
           </Key>
           <Property Type="String" Name="PhotoID" Nullable="false" annotation:StoreGeneratedPattern="None" />
           <Property Type="String" Name="Title" Nullable="false" />
-          <Property Type="String" Name="Url" Nullable="true" />
+          <Property Type="String" Name="UrlThumbnail" Nullable="true" />
           <Property Type="Binary" Name="SCD" Nullable="false" />
           <Property Type="Binary" Name="CLD" Nullable="false" />
           <Property Type="Binary" Name="DCD" Nullable="true" />
           <Property Type="Binary" Name="EHD" Nullable="false" />
           <Property Type="Binary" Name="CEDD" Nullable="false" />
           <Property Type="Binary" Name="FCTH" Nullable="false" />
-          <NavigationProperty Name="Tags" Relationship="PhotosModel.Tags" FromRole="Photo" ToRole="Tag" />
+          <Property Type="String" Name="UrlMedium" Nullable="true" />
+          <Property Type="String" Name="UrlLarge" Nullable="true" />
+          <Property Type="String" Name="ImagePath" Nullable="true" />
         </EntityType>
-        <EntityType Name="Tag">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Type="Int32" Name="Id" Nullable="false" annotation:StoreGeneratedPattern="None" />
-          <Property Type="String" Name="Name" Nullable="false" />
-          <NavigationProperty Name="Photos" Relationship="PhotosModel.Tags" FromRole="Tag" ToRole="Photo" />
-        </EntityType>
-        <Association Name="Tags">
-          <End Type="PhotosModel.Photo" Role="Photo" Multiplicity="*" />
-          <End Type="PhotosModel.Tag" Role="Tag" Multiplicity="*" />
-        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -121,32 +60,19 @@
         <MappingFragment StoreEntitySet="PhotoSet">
           <ScalarProperty Name="PhotoID" ColumnName="PhotoID" />
           <ScalarProperty Name="Title" ColumnName="Title" />
-          <ScalarProperty Name="Url" ColumnName="Url" />
+          <ScalarProperty Name="UrlThumbnail" ColumnName="UrlThumbnail" />
           <ScalarProperty Name="SCD" ColumnName="SCD" />
           <ScalarProperty Name="CLD" ColumnName="CLD" />
           <ScalarProperty Name="DCD" ColumnName="DCD" />
           <ScalarProperty Name="EHD" ColumnName="EHD" />
           <ScalarProperty Name="CEDD" ColumnName="CEDD" />
           <ScalarProperty Name="FCTH" ColumnName="FCTH" />
+          <ScalarProperty Name="UrlMedium" ColumnName="UrlMedium" />
+          <ScalarProperty Name="UrlLarge" ColumnName="UrlLarge" />
+          <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="TagSet">
-      <EntityTypeMapping TypeName="IsTypeOf(PhotosModel.Tag)">
-        <MappingFragment StoreEntitySet="TagSet">
-          <ScalarProperty Name="Id" ColumnName="Id" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <AssociationSetMapping Name="Tags" TypeName="PhotosModel.Tags" StoreEntitySet="Tags">
-      <EndProperty Name="Photo">
-        <ScalarProperty Name="PhotoID" ColumnName="Photos_PhotoID" />
-      </EndProperty>
-      <EndProperty Name="Tag">
-        <ScalarProperty Name="Id" ColumnName="Tags_Id" />
-      </EndProperty>
-    </AssociationSetMapping>
   </EntityContainerMapping>
 </Mapping></edmx:Mappings>
   </edmx:Runtime>
@@ -167,12 +93,7 @@
     <!-- Diagram content (shape and connector positions) -->
     <Diagrams>
       <Diagram Name="Photos" >
-        <EntityTypeShape EntityType="PhotosModel.Photo" Width="1.5" PointX="1.25" PointY="1" Height="2.7494921875" />
-        <EntityTypeShape EntityType="PhotosModel.Tag" Width="1.5" PointX="4.75" PointY="1.625" Height="1.4033821614583331" />
-        <AssociationConnector Association="PhotosModel.Tags">
-          <ConnectorPoint PointX="2.75" PointY="2.422841796875" />
-          <ConnectorPoint PointX="4.75" PointY="2.422841796875" />
-        </AssociationConnector>
+        <EntityTypeShape EntityType="PhotosModel.Photo" Width="1.5" PointX="1.25" PointY="1" Height="3.5186979166666656" />
       </Diagram>
     </Diagrams>
   </Designer>

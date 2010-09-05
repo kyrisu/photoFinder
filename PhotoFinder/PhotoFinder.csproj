@@ -82,6 +82,7 @@
     <Compile Include="Descriptor.cs" />
     <Compile Include="DescriptorTools.cs" />
     <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="ImageInfo.cs" />
     <Compile Include="PhotoFinderForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -139,6 +140,9 @@
     <Content Include="lib\Flickr\FlickrNetCF.dll" />
     <Content Include="lib\Flickr\FlickrNetCF.pdb" />
     <Content Include="lib\ImageListView.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

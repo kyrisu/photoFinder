@@ -20,9 +20,11 @@ namespace PhotoFinder
         /// Bitmap object to be later passed to descriptor calculating methods.
         /// </summary>
         private Bitmap _QueryBitmap = null;
-
+        private List<string> _PhotoIdList = new List<string>();
         private Flickr _Flickr;
+        private string _FolderPath;
         bool _IsIndexing = false;
+        bool _IsSearching = false;
 
         public PhotoFinderForm()
         {
@@ -30,7 +32,7 @@ namespace PhotoFinder
             _Flickr = new Flickr("135794b7b378a7ecbd10186748d28fb0");
         }
 
-        private void PopulateGallery(string path, string photoID)
+        private void PopulateGallery(string path, FlickrNet.Photo photo)
         {
             try
             {
@@ -39,7 +41,10 @@ namespace PhotoFinder
                 {
                     Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem();
                     ilvi.FileName = file.FullName;
-                    ilvi.Tag = photoID;
+                    ilvi.Tag = new ImageInfo
+                    {
+                        PhotoID = photo.PhotoId
+                    };
                     ilvGallery.Items.Add(ilvi);
                     Application.DoEvents();
                 }
@@ -73,6 +78,14 @@ namespace PhotoFinder
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
+            if (_IsSearching == true)
+            {
+                _IsSearching = false;
+                btnSearch.Text = "Search";
+                return;
+            }
+            _IsSearching = true;
+            btnSearch.Text = "Searching...";
             if (_QueryBitmap == null)
             {
                 MessageBox.Show("No query defined!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -83,17 +96,18 @@ namespace PhotoFinder
             Descriptor desc = Descriptor.NONE;
             desc |= (clbDescriptorsList.GetItemChecked(0) ? Descriptor.SCD : Descriptor.NONE);
             desc |= (clbDescriptorsList.GetItemChecked(1) ? Descriptor.CLD : Descriptor.NONE);
-            desc |= (clbDescriptorsList.GetItemChecked(2) ? Descriptor.DCD : Descriptor.NONE);
-            desc |= (clbDescriptorsList.GetItemChecked(3) ? Descriptor.EHD : Descriptor.NONE);
-            desc |= (clbDescriptorsList.GetItemChecked(4) ? Descriptor.CEDD : Descriptor.NONE);
-            desc |= (clbDescriptorsList.GetItemChecked(5) ? Descriptor.FCTH : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(2) ? Descriptor.EHD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(3) ? Descriptor.CEDD : Descriptor.NONE);
+            desc |= (clbDescriptorsList.GetItemChecked(4) ? Descriptor.FCTH : Descriptor.NONE);
+            //desc |= (clbDescriptorsList.GetItemChecked(2) ? Descriptor.DCD : Descriptor.NONE);
 
             ilvGallery.Items.Clear();
             if (desc == Descriptor.NONE)
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             else
                 SearchInDatabase(GetQuery(_QueryBitmap, desc), desc);
-
+            btnSearch.Text = "Search";
+            _IsSearching = false;
         }
 
         /// <summary>
@@ -120,37 +134,50 @@ namespace PhotoFinder
         {
             if (query != null)
             {
+                cbxSort.Items.Clear();
+                foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
+                {
+                    if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
+                        cbxSort.Items.Add(descriptor.ToString());
+                }
+                
                 try
                 {
                     PhotosEntities photoEntities = new PhotosEntities();
 
-                    foreach (var entry in photoEntities.PhotoSet)
+                    foreach (var photoId in _PhotoIdList)
                     {
-                        Gallery.ImageListViewItem ilvi = null;
-
+                        bool comply = false;
+                        Photo photo = photoEntities.PhotoSet.Single(p => p.PhotoID == photoId);
+                        Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem(photo.ImagePath);
+                        //we need to clear the filename form the text property, and set it to picture title
+                        ilvi.Text = "Photo title: " + photo.Title + Environment.NewLine;
+                        ilvi.Tag = new ImageInfo
+                        {
+                            PhotoID = photo.PhotoID
+                        };
                         foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
                         {
                             if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
                             {
-                                double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], entry.GetByIndex(descriptor.ToString()).BDeserialize(), descriptor);
+                                double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], photo.GetByIndex(descriptor.ToString()).BDeserialize(), descriptor);
+                                //TODO: distance needs to be set per descriptor
                                 if (distance >= 0)
                                 {
-                                    string tmpFileName = TempManager.GetTempFileName();
-                                    WebClient client = new WebClient();
-                                    if (entry.Url != null)
-                                        client.DownloadFile(entry.Url, tmpFileName);
-                                    else
-                                    {
-                                        PhotoInfo photoInfo = _Flickr.PhotosGetInfo(entry.PhotoID);
-                                        client.DownloadFile(photoInfo.ThumbnailUrl, tmpFileName);
-                                    }
+                                    comply = true;
+                                    //string tmpFileName = TempManager.GetTempFileName();
+                                    string tmpFileName = Path.Combine(_FolderPath, photo.PhotoID + ".jpg");
+                                    ((ImageInfo)ilvi.Tag).SetDescriptorDistance(descriptor, distance);
                                     GalleryEntryBuilder(new FileInfo(tmpFileName), ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
                                 }
                             }
                         }
 
-                        // after all descriptors touched the file it goes to the gallery
-                        if (ilvi != null) ilvGallery.Items.Add(ilvi);
+                        // after all descriptors touched the file it goes to the gallery if it complies with the query parameters
+                        if (comply)
+                        {
+                            ilvGallery.Items.Add(ilvi);
+                        }
                     }
                 }
                 catch (UnauthorizedAccessException)
@@ -170,22 +197,17 @@ namespace PhotoFinder
         {
             // check if ilvi is initialized, if not initialize it
             if (ilvi == null) ilvi = new Gallery.ImageListViewItem { FileName = file.FullName };
-            ilvi.Text += caption + Environment.NewLine;
+            ilvi.Text += caption + " | ";
         }
 
         private void tpImgSearch_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
             {
-                string fileName = TempManager.GetTempFileName();
-                WebClient client = new WebClient();
-                client.DownloadFile(_Flickr.PhotosGetInfo((string)ilvGallery.SelectedItems[0].Tag).LargeUrl, fileName);
-                //_QueryBitmap = new Bitmap(Image.FromFile(((string[])e.Data.GetData(DataFormats.FileDrop))[0]));
-                _QueryBitmap = new Bitmap(Image.FromFile(fileName));
+                _QueryBitmap = new Bitmap(Image.FromFile(((string[])e.Data.GetData(DataFormats.FileDrop, false))[0]));
                 tpImgSearch.BackgroundImage = _QueryBitmap;
                 lbDIH1.Visible = false;
             }
-
         }
 
         private void tpImgSearch_DragEnter(object sender, DragEventArgs e)
@@ -219,51 +241,44 @@ namespace PhotoFinder
             }
             PhotoSearchOptions searchOptions = new PhotoSearchOptions();
             searchOptions.Tags = tbFlickrQuery.Text;
+            searchOptions.PerPage = 100;
 
-            PhotoCollection photoCollection;
-            _Flickr.PhotosSearchAsync(searchOptions, result =>
+            _Flickr.PhotosSearchAsync(searchOptions, SearchAsyncFinished);
+        }
+
+        private void SearchAsyncFinished(FlickrResult<FlickrNet.PhotoCollection> result)
+        {
+            if (result.HasError)
             {
-                if (result.HasError)
+                //TODO: exception handling
+            }
+            else
+            {
+                PhotoCollection photoCollection = result.Result;
+                _PhotoIdList.Clear();
+                WebClient client = new WebClient();
+                PhotosEntities photoEntities = new PhotosEntities();
+                foreach (FlickrNet.Photo photo in photoCollection)
                 {
-                    //TODO: exception handling
-                }
-                else
-                {
-                    photoCollection = result.Result;
-                    WebClient client = new WebClient();
-                    PhotosEntities photoEntities = new PhotosEntities();
-                    foreach (FlickrNet.Photo photo in photoCollection)
+                    _PhotoIdList.Add(photo.PhotoId);
+                    //string tempFile = TempManager.GetTempFileName();
+                    string tempFile = Path.Combine(_FolderPath, photo.PhotoId + ".jpg");
+                    // check if the photo was indexed before
+                    if (photoEntities.PhotoSet.Count(p => p.PhotoID == photo.PhotoId) < 1)
                     {
-                        string tempFile = TempManager.GetTempFileName();
-                        // check if the photo was indexed before
-                        if (photoEntities.PhotoSet.Count(p => p.PhotoID == photo.PhotoId) > 0)
-                            client.DownloadFile(photo.ThumbnailUrl, tempFile);
-                        else
-                        {
-                            client.DownloadFile(photo.MediumUrl, tempFile);
-                            // insert record to db
-                            FileInfo tmpFileInfo = new FileInfo(tempFile);
-                            Photo dbPhotoEntry = new Photo
-                            {
-                                PhotoID = photo.PhotoId,
-                                Title = photo.Title,
-                                Url = photo.OriginalUrl,
-                                SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(),
-                                CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(),
-                                //DCD = DescriptorTools.CalculateDescriptor(fi, Descriptor.DCD).BSerialize(),
-                                EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(),
-                                CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(),
-                                FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize()
-                            };
-                            photoEntities.PhotoSet.AddObject(dbPhotoEntry);
-                            photoEntities.SaveChanges();
-                        }
-                        PopulateGallery(tempFile, photo.PhotoId);
-                        if (!_IsIndexing) return;
+                        client.DownloadFile(photo.MediumUrl, tempFile);
+                        // insert record to db
+                        FileInfo tmpFileInfo = new FileInfo(tempFile);
+                        Photo dbPhotoEntry = new Photo { PhotoID = photo.PhotoId, Title = photo.Title, UrlThumbnail = photo.ThumbnailUrl, UrlMedium = photo.MediumUrl, UrlLarge = photo.LargeUrl, ImagePath = tempFile, SCD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.SCD).BSerialize(), CLD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CLD).BSerialize(), EHD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.EHD).BSerialize(), CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(), FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize() };
+                        photoEntities.PhotoSet.AddObject(dbPhotoEntry);
+                        photoEntities.SaveChanges();
                     }
-                    btnSearchFlickr.Text = "Index Flickr";
+                    PopulateGallery(tempFile, photo);
+                    if (!_IsIndexing)
+                        return;
                 }
-            });
+                btnSearchFlickr.Text = "Index Flickr";
+            }
         }
 
         private void tbFlickrQuery_KeyUp(object sender, KeyEventArgs e)
@@ -276,6 +291,80 @@ namespace PhotoFinder
         {
             ilvGallery.Items.Clear();
             TempManager.Dispose();
+        }
+
+        private void tpSaveBox_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+            {
+                WebClient client = new WebClient();
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                FlickrNet.PhotoInfo photo = _Flickr.PhotosGetInfo((string)ilvGallery.SelectedItems[0].Tag);
+                String path = (new Uri(photo.MediumUrl)).LocalPath;
+                saveFileDialog.FileName = Path.GetFileName(path);
+                saveFileDialog.DefaultExt = Path.GetExtension(path);
+                switch (saveFileDialog.DefaultExt)
+                {
+                    case "jpg":
+                        saveFileDialog.Filter = "JPG Files (*.jpg)|*.jpg";
+                        break;
+                    case "jpeg":
+                        saveFileDialog.Filter = "JPEG Files (*.jpeg)|*.jpeg";
+                        break;
+                    case "gif":
+                        saveFileDialog.Filter = "GIF Files (*.gif)|*.gif";
+                        break;
+                    case "png":
+                        saveFileDialog.Filter = "PNG Files (*.png)|*.png";
+                        break;
+                }
+                saveFileDialog.Filter += "|All Files (*.*)|*.*";
+                if (saveFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    client.DownloadFile(photo.MediumUrl, saveFileDialog.FileName);
+                }
+            }
+        }
+
+        private void tpSaveBox_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop, false))
+                e.Effect = DragDropEffects.All;
+            else
+                e.Effect = DragDropEffects.None;
+        }
+
+        private void PhotoFinderForm_Load(object sender, EventArgs e)
+        {
+            tpSaveBox.AllowDrop = true;
+
+            // find or create image folder
+            _FolderPath = Path.Combine(Directory.GetCurrentDirectory(), "Images");
+            if (!Directory.Exists(_FolderPath))
+                Directory.CreateDirectory(_FolderPath);
+
+            // check sort order to ascending
+            rbAsc.Select();
+        }
+
+        /// <summary>
+        /// Function sorts Gallery items by Descriptor values stored in Tag property of every element.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void cbxSort_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Manina.Windows.Forms.ImageListViewItem[] sortedItemList;
+            if(rbAsc.Checked)
+                sortedItemList = ilvGallery.Items.OrderBy(ilv => 
+                ((ImageInfo)ilv.Tag).GetDescriptorDistance((Descriptor)Enum.Parse(typeof(Descriptor), cbxSort.SelectedItem.ToString(), true))
+                ).ToArray();
+            else
+                sortedItemList = ilvGallery.Items.OrderByDescending(ilv =>
+                ((ImageInfo)ilv.Tag).GetDescriptorDistance((Descriptor)Enum.Parse(typeof(Descriptor), cbxSort.SelectedItem.ToString(), true))
+                ).ToArray();
+            ilvGallery.Items.Clear();
+            ilvGallery.Items.AddRange(sortedItemList);
         }
     }
 }
