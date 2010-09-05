@@ -115,7 +115,7 @@ namespace PhotoFinder
         }
 
         /// <summary>
-        /// Calculating CEDD deviation using Tonimoto Classifier
+        /// Calculating CEDD deviation using Tanimoto Classifier
         /// </summary>
         /// <param name="histogramA"></param>
         /// <param name="histogramB"></param>
