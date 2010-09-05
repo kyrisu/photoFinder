@@ -1,0 +1,100 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="2.0" xmlns:edmx="http://schemas.microsoft.com/ado/2008/10/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="PhotosModel.Store" Alias="Self" Provider="System.Data.SqlServerCe.3.5" ProviderManifestToken="3.5" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns="http://schemas.microsoft.com/ado/2009/02/edm/ssdl">
+  <EntityContainer Name="PhotosModelStoreContainer">
+    <EntitySet Name="PhotoSet" EntityType="PhotosModel.Store.PhotoSet" store:Type="Tables" Schema="dbo" />
+  </EntityContainer>
+  <EntityType Name="PhotoSet">
+    <Key>
+      <PropertyRef Name="PhotoID" />
+    </Key>
+    <Property Name="PhotoID" Type="nvarchar" Nullable="false" />
+    <Property Name="Title" Type="nvarchar" Nullable="false" />
+    <Property Name="UrlThumbnail" Type="nvarchar" Nullable="true" />
+    <Property Name="SCD" Type="varbinary" Nullable="false" />
+    <Property Name="CLD" Type="varbinary" Nullable="false" />
+    <Property Name="DCD" Type="varbinary" Nullable="true" />
+    <Property Name="EHD" Type="varbinary" Nullable="false" />
+    <Property Name="CEDD" Type="varbinary" Nullable="false" />
+    <Property Name="FCTH" Type="varbinary" Nullable="false" />
+    <Property Name="UrlMedium" Type="nvarchar" Nullable="true" />
+    <Property Name="UrlLarge" Type="nvarchar" Nullable="true" />
+    <Property Name="ImagePath" Type="nvarchar" Nullable="true" />
+  </EntityType>
+</Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PhotosModel" Alias="Self" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+        <EntityContainer Name="PhotosEntities" annotation:LazyLoadingEnabled="true" >
+          <EntitySet Name="PhotoSet" EntityType="PhotosModel.Photo" />
+        </EntityContainer>
+        <EntityType Name="Photo">
+          <Key>
+            <PropertyRef Name="PhotoID" />
+          </Key>
+          <Property Type="String" Name="PhotoID" Nullable="false" annotation:StoreGeneratedPattern="None" />
+          <Property Type="String" Name="Title" Nullable="false" />
+          <Property Type="String" Name="UrlThumbnail" Nullable="true" />
+          <Property Type="Binary" Name="SCD" Nullable="false" />
+          <Property Type="Binary" Name="CLD" Nullable="false" />
+          <Property Type="Binary" Name="DCD" Nullable="true" />
+          <Property Type="Binary" Name="EHD" Nullable="false" />
+          <Property Type="Binary" Name="CEDD" Nullable="false" />
+          <Property Type="Binary" Name="FCTH" Nullable="false" />
+          <Property Type="String" Name="UrlMedium" Nullable="true" />
+          <Property Type="String" Name="UrlLarge" Nullable="true" />
+          <Property Type="String" Name="ImagePath" Nullable="true" />
+        </EntityType>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+    <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2008/09/mapping/cs">
+  <EntityContainerMapping StorageEntityContainer="PhotosModelStoreContainer" CdmEntityContainer="PhotosEntities">
+    <EntitySetMapping Name="PhotoSet">
+      <EntityTypeMapping TypeName="IsTypeOf(PhotosModel.Photo)">
+        <MappingFragment StoreEntitySet="PhotoSet">
+          <ScalarProperty Name="PhotoID" ColumnName="PhotoID" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="UrlThumbnail" ColumnName="UrlThumbnail" />
+          <ScalarProperty Name="SCD" ColumnName="SCD" />
+          <ScalarProperty Name="CLD" ColumnName="CLD" />
+          <ScalarProperty Name="DCD" ColumnName="DCD" />
+          <ScalarProperty Name="EHD" ColumnName="EHD" />
+          <ScalarProperty Name="CEDD" ColumnName="CEDD" />
+          <ScalarProperty Name="FCTH" ColumnName="FCTH" />
+          <ScalarProperty Name="UrlMedium" ColumnName="UrlMedium" />
+          <ScalarProperty Name="UrlLarge" ColumnName="UrlLarge" />
+          <ScalarProperty Name="ImagePath" ColumnName="ImagePath" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+  </EntityContainerMapping>
+</Mapping></edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2008/10/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="False" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="True" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams>
+      <Diagram Name="Photos" >
+        <EntityTypeShape EntityType="PhotosModel.Photo" Width="1.5" PointX="1.25" PointY="1" Height="3.5186979166666656" />
+      </Diagram>
+    </Diagrams>
+  </Designer>
+</edmx:Edmx>

@@ -1,0 +1,61 @@
+
+-- --------------------------------------------------
+-- Entity Designer DDL Script for SQL Server Compact Edition
+-- --------------------------------------------------
+-- Date Created: 09/05/2010 14:02:42
+-- Generated from EDMX file: D:\dev\PhotoFinder\PhotoFinder\Photos.edmx
+-- --------------------------------------------------
+
+
+-- --------------------------------------------------
+-- Dropping existing FOREIGN KEY constraints
+-- NOTE: if the constraint does not exist, an ignorable error will be reported.
+-- --------------------------------------------------
+
+
+-- --------------------------------------------------
+-- Dropping existing tables
+-- NOTE: if the table does not exist, an ignorable error will be reported.
+-- --------------------------------------------------
+
+    DROP TABLE [PhotoSet];
+GO
+
+-- --------------------------------------------------
+-- Creating all tables
+-- --------------------------------------------------
+
+-- Creating table 'PhotoSet'
+CREATE TABLE [PhotoSet] (
+    [PhotoID] nvarchar(4000)  NOT NULL,
+    [Title] nvarchar(4000)  NOT NULL,
+    [UrlThumbnail] nvarchar(4000)  NULL,
+    [SCD] varbinary(8000)  NOT NULL,
+    [CLD] varbinary(8000)  NOT NULL,
+    [DCD] varbinary(8000)  NULL,
+    [EHD] varbinary(8000)  NOT NULL,
+    [CEDD] varbinary(8000)  NOT NULL,
+    [FCTH] varbinary(8000)  NOT NULL,
+    [UrlMedium] nvarchar(4000)  NULL,
+    [UrlLarge] nvarchar(4000)  NULL,
+    [ImagePath] nvarchar(4000)  NULL
+);
+GO
+
+-- --------------------------------------------------
+-- Creating all PRIMARY KEY constraints
+-- --------------------------------------------------
+
+-- Creating primary key on [PhotoID] in table 'PhotoSet'
+ALTER TABLE [PhotoSet]
+ADD CONSTRAINT [PK_PhotoSet]
+    PRIMARY KEY ([PhotoID] );
+GO
+
+-- --------------------------------------------------
+-- Creating all FOREIGN KEY constraints
+-- --------------------------------------------------
+
+-- --------------------------------------------------
+-- Script has ended
+-- --------------------------------------------------

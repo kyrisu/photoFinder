@@ -235,10 +235,6 @@ namespace PhotoFinder
 
         #region CLD
 
-
-        
-       
-       
         /// <summary>
         /// Przeciazenie funkcji PoliczCLD(Bitmap bitmap)
         /// </summary>
@@ -249,6 +245,7 @@ namespace PhotoFinder
             Bitmap bitmap = (Bitmap)Image.FromFile(image.FullName);
             return PoliczCLD(bitmap);
         }
+
         /// <summary>
         /// Funkcja liczaca wartosci deskryptora CLD dla obrazka bitmap, 
         /// </summary>

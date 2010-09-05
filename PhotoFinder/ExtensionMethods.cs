@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Gallery = Manina.Windows.Forms;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace PhotoFinder
 {
@@ -19,7 +20,8 @@ namespace PhotoFinder
             if (!(Path.GetExtension(fi.Extension).Equals(".jpg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".jpeg", StringComparison.InvariantCultureIgnoreCase)
                 || Path.GetExtension(fi.Extension).Equals(".png", StringComparison.InvariantCultureIgnoreCase)
-                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase)))
+                || Path.GetExtension(fi.Extension).Equals(".gif", StringComparison.InvariantCultureIgnoreCase)
+                || Path.GetExtension(fi.Extension).Equals(".tmp", StringComparison.InvariantCultureIgnoreCase)))
                 return false;
 
             try
@@ -33,6 +35,41 @@ namespace PhotoFinder
             }
 
             return true;
+        }
+
+        public static byte[] BSerialize(this object obj){
+            MemoryStream stream = new MemoryStream();
+            BinaryFormatter bf = new BinaryFormatter();
+            bf.Serialize(stream, obj);
+            return stream.ToArray();
+        }
+
+        public static object BDeserialize(this byte[] array)
+        {
+            MemoryStream stream = new MemoryStream(array);
+            BinaryFormatter bf = new BinaryFormatter();
+            return bf.Deserialize(stream);
+        }
+
+        public static byte[] GetByIndex(this Photo photo, string index)
+        {
+            switch (index)
+            {
+                case "SCD":
+                    return photo.SCD;
+                case "CLD":
+                    return photo.CLD;
+                case "DCD":
+                    return photo.DCD;
+                case "EHD":
+                    return photo.EHD;
+                case "CEDD":
+                    return photo.CEDD;
+                case "FCTH":
+                    return photo.FCTH;
+                default:
+                    return null;
+            }
         }
     }
 }
