@@ -13,6 +13,7 @@ using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
 using Manina.Windows.Forms;
+using System.Runtime.InteropServices;
 
 
 namespace PhotoFinder
@@ -37,6 +38,9 @@ namespace PhotoFinder
         }
 
         private delegate void PopulateGalleryCallback(Manina.Windows.Forms.ImageListViewItem ilvi);
+
+        [DllImport("wininet.dll")]
+        private extern static bool InternetGetConnectedState(out int Description, int ReservedValue);
 
         private void PopulateGallery(string path, FlickrNet.Photo photo)
         {
@@ -247,6 +251,13 @@ namespace PhotoFinder
                 btnSearchFlickr.Text = "Index Flickr";
                 return;
             }
+            int Desc ;
+            if (!InternetGetConnectedState(out Desc, 0))
+            {
+                MessageBox.Show("Indexing Flickr needs working internet connection. Unfortunately no working connection was detected.",
+                                "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
             ilvGallery.Items.Clear();
             _IsIndexing = true;
             btnSearchFlickr.Text = "Stop Indexing";
@@ -296,6 +307,11 @@ namespace PhotoFinder
                         CEDD = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.CEDD).BSerialize(), 
                         FCTH = DescriptorTools.CalculateDescriptor(tmpFileInfo, Descriptor.FCTH).BSerialize() };
                     photoEntities.PhotoSet.AddObject(dbPhotoEntry);
+                }
+                else
+                {
+                    if (!File.Exists(tempFile))
+                        client.DownloadFile(photo.MediumUrl, tempFile);
                 }
                 PopulateGallery(tempFile, photo);
                 if (!_IsIndexing)

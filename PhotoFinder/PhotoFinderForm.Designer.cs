@@ -28,12 +28,11 @@
         /// </summary>
         private void InitializeComponent()
         {
-            Manina.Windows.Forms.ImageListViewColor imageListViewColor1 = new Manina.Windows.Forms.ImageListViewColor();
+            Manina.Windows.Forms.ImageListViewColor imageListViewColor2 = new Manina.Windows.Forms.ImageListViewColor();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PhotoFinderForm));
             this.tcSearch = new System.Windows.Forms.TabControl();
             this.tpImgSearch = new System.Windows.Forms.TabPage();
             this.lbDIH1 = new System.Windows.Forms.Label();
-            this.tpParmSearch = new System.Windows.Forms.TabPage();
             this.tpSaveBox = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -61,7 +60,6 @@
             // tcSearch
             // 
             this.tcSearch.Controls.Add(this.tpImgSearch);
-            this.tcSearch.Controls.Add(this.tpParmSearch);
             this.tcSearch.Location = new System.Drawing.Point(12, 34);
             this.tcSearch.Name = "tcSearch";
             this.tcSearch.SelectedIndex = 0;
@@ -78,7 +76,7 @@
             this.tpImgSearch.Padding = new System.Windows.Forms.Padding(3);
             this.tpImgSearch.Size = new System.Drawing.Size(217, 162);
             this.tpImgSearch.TabIndex = 0;
-            this.tpImgSearch.Text = "Image Search";
+            this.tpImgSearch.Text = "Image Query";
             this.tpImgSearch.UseVisualStyleBackColor = true;
             this.tpImgSearch.DragDrop += new System.Windows.Forms.DragEventHandler(this.tpImgSearch_DragDrop);
             this.tpImgSearch.DragEnter += new System.Windows.Forms.DragEventHandler(this.tpImgSearch_DragEnter);
@@ -92,16 +90,6 @@
             this.lbDIH1.Size = new System.Drawing.Size(91, 13);
             this.lbDIH1.TabIndex = 0;
             this.lbDIH1.Text = "Drag Image Here!";
-            // 
-            // tpParmSearch
-            // 
-            this.tpParmSearch.Location = new System.Drawing.Point(4, 22);
-            this.tpParmSearch.Name = "tpParmSearch";
-            this.tpParmSearch.Padding = new System.Windows.Forms.Padding(3);
-            this.tpParmSearch.Size = new System.Drawing.Size(217, 162);
-            this.tpParmSearch.TabIndex = 1;
-            this.tpParmSearch.Text = "Parametric Search";
-            this.tpParmSearch.UseVisualStyleBackColor = true;
             // 
             // tpSaveBox
             // 
@@ -138,37 +126,37 @@
             // ilvGallery
             // 
             this.ilvGallery.AllowDrag = true;
-            imageListViewColor1.BackColor = System.Drawing.SystemColors.Window;
-            imageListViewColor1.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.CellForeColor = System.Drawing.SystemColors.ControlText;
-            imageListViewColor1.ColumnHeaderBackColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            imageListViewColor1.ColumnHeaderBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
-            imageListViewColor1.ColumnHeaderForeColor = System.Drawing.SystemColors.WindowText;
-            imageListViewColor1.ColumnHeaderHoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ColumnHeaderHoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ColumnSelectColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.ColumnSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.ControlBackColor = System.Drawing.SystemColors.Window;
-            imageListViewColor1.ForeColor = System.Drawing.SystemColors.ControlText;
-            imageListViewColor1.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.HoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.HoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ImageInnerBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            imageListViewColor1.ImageOuterBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
-            imageListViewColor1.InsertionCaretColor = System.Drawing.SystemColors.Highlight;
-            imageListViewColor1.PaneBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.PaneLabelColor = System.Drawing.SystemColors.GrayText;
-            imageListViewColor1.PaneSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.SelectedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectionRectangleBorderColor = System.Drawing.SystemColors.Highlight;
-            imageListViewColor1.SelectionRectangleColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.SelectionRectangleColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
-            imageListViewColor1.UnFocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.UnFocusedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            imageListViewColor1.UnFocusedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
-            this.ilvGallery.Colors = imageListViewColor1;
+            imageListViewColor2.BackColor = System.Drawing.SystemColors.Window;
+            imageListViewColor2.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.CellForeColor = System.Drawing.SystemColors.ControlText;
+            imageListViewColor2.ColumnHeaderBackColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            imageListViewColor2.ColumnHeaderBackColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(196)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))), ((int)(((byte)(240)))));
+            imageListViewColor2.ColumnHeaderForeColor = System.Drawing.SystemColors.WindowText;
+            imageListViewColor2.ColumnHeaderHoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.ColumnHeaderHoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.ColumnSelectColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.ColumnSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(32)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.ControlBackColor = System.Drawing.SystemColors.Window;
+            imageListViewColor2.ForeColor = System.Drawing.SystemColors.ControlText;
+            imageListViewColor2.HoverBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.HoverColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(8)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.HoverColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.ImageInnerBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
+            imageListViewColor2.ImageOuterBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))), ((int)(((byte)(128)))));
+            imageListViewColor2.InsertionCaretColor = System.Drawing.SystemColors.Highlight;
+            imageListViewColor2.PaneBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.PaneLabelColor = System.Drawing.SystemColors.GrayText;
+            imageListViewColor2.PaneSeparatorColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.SelectedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.SelectedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(16)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.SelectedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.SelectionRectangleBorderColor = System.Drawing.SystemColors.Highlight;
+            imageListViewColor2.SelectionRectangleColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.SelectionRectangleColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(51)))), ((int)(((byte)(153)))), ((int)(((byte)(255)))));
+            imageListViewColor2.UnFocusedBorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(128)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.UnFocusedColor1 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            imageListViewColor2.UnFocusedColor2 = System.Drawing.Color.FromArgb(((int)(((byte)(64)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))), ((int)(((byte)(109)))));
+            this.ilvGallery.Colors = imageListViewColor2;
             this.ilvGallery.DefaultImage = ((System.Drawing.Image)(resources.GetObject("ilvGallery.DefaultImage")));
             this.ilvGallery.Dock = System.Windows.Forms.DockStyle.Fill;
             this.ilvGallery.ErrorImage = ((System.Drawing.Image)(resources.GetObject("ilvGallery.ErrorImage")));
@@ -219,6 +207,7 @@
             // 
             // gbImgDetails
             // 
+            this.gbImgDetails.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.gbImgDetails.Controls.Add(this.lblDescriptorsDetails);
             this.gbImgDetails.Location = new System.Drawing.Point(243, 398);
             this.gbImgDetails.Name = "gbImgDetails";
@@ -255,6 +244,7 @@
             // 
             // cbxSort
             // 
+            this.cbxSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxSort.FormattingEnabled = true;
             this.cbxSort.Location = new System.Drawing.Point(817, 3);
             this.cbxSort.Name = "cbxSort";
@@ -265,6 +255,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(767, 6);
             this.label2.Name = "label2";
@@ -274,6 +265,7 @@
             // 
             // pSort
             // 
+            this.pSort.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.pSort.Controls.Add(this.rbDesc);
             this.pSort.Controls.Add(this.rbAsc);
             this.pSort.Location = new System.Drawing.Point(922, 4);
@@ -343,7 +335,6 @@
 
         private System.Windows.Forms.TabControl tcSearch;
         private System.Windows.Forms.TabPage tpImgSearch;
-        private System.Windows.Forms.TabPage tpParmSearch;
         private System.Windows.Forms.GroupBox tpSaveBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Panel panel1;
