@@ -30,6 +30,8 @@ namespace PhotoFinder
         bool _IsIndexing = false;
         bool _IsSearching = false;
         bool _RefreshGallery = false;
+        bool _FolderSearch = false;
+        string _SourceFolderPath;
 
         public PhotoFinderForm()
         {
@@ -126,6 +128,8 @@ namespace PhotoFinder
             ilvGallery.Items.Clear();
             if (desc == Descriptor.NONE)
                 MessageBox.Show("You need to choose the descriptor first!", "Warning!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            else if (_FolderSearch)
+                ThreadPool.QueueUserWorkItem(SearchInFolder, desc);
             else
                 SearchInDatabase(GetQuery(_QueryBitmap, desc), desc);
             btnSearch.Text = "Search";
@@ -205,6 +209,73 @@ namespace PhotoFinder
                     // again.. so what.. go go go!
                 }
             }
+        }
+
+        /// <summary>
+        /// Searches in _SourceFolderPath directory
+        /// </summary>
+        /// <param name="_SourceFolderPath"></param>
+        /// <param name="query"></param>
+        private void SearchInFolder(object odesc)
+        {
+            Descriptor desc = (Descriptor)odesc;
+            var query = GetQuery(_QueryBitmap, desc);
+            if (!String.IsNullOrEmpty(_SourceFolderPath) && query != null)
+            {
+                try
+                {
+                    foreach (var file in (new DirectoryInfo(_SourceFolderPath)).GetFiles())
+                    {
+                        bool comply = false;
+                        Gallery.ImageListViewItem ilvi = new Gallery.ImageListViewItem(file.FullName);
+                        //we need to clear the filename form the text property, and set it to picture title
+                        ilvi.Text = "Photo title: " + file.Name + Environment.NewLine;
+                        ilvi.Tag = new ImageInfo
+                        {
+                            PhotoID = file.FullName
+                        };
+                        if (file.IsImage())
+                        {
+
+                            foreach (Descriptor descriptor in Enum.GetValues(typeof(Descriptor)))
+                            {
+                                if (descriptor != Descriptor.NONE && (desc & descriptor) == descriptor)
+                                {
+                                    double distance = DescriptorTools.CalculateDescriptorDistance(query[descriptor], DescriptorTools.CalculateDescriptor(file, descriptor), descriptor);
+                                    //TODO: distance needs to be set per descriptor
+                                    if (distance >= 0)
+                                    {
+                                        comply = true;
+                                        //string tmpFileName = TempManager.GetTempFileName();
+                                        string tmpFileName = file.FullName;
+                                        ((ImageInfo)ilvi.Tag).SetDescriptorDistance(descriptor, distance);
+                                        GalleryEntryBuilder(new FileInfo(tmpFileName), ref ilvi, descriptor.ToString() + ": " + distance.ToString("F"));
+                                    }
+                                }
+                            }
+
+                            // after all descriptors touched the file it goes to the gallery if it complies with the query parameters
+                            if (comply)
+                            {
+                                if (ilvGallery.InvokeRequired)
+                                {
+                                    PopulateGalleryCallback d = new PopulateGalleryCallback(PopulateGallery);
+                                    this.Invoke(d, new object[] { ilvi });
+                                }
+                                else
+                                {
+                                    ilvGallery.Items.Add(ilvi);
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    // again.. so what.. go go go!
+                }
+            }
+
         }
 
         /// <summary>
@@ -445,6 +516,25 @@ namespace PhotoFinder
         private void rbAsc_CheckedChanged(object sender, EventArgs e)
         {
             cbxSort_SelectedIndexChanged(null, null);
+        }
+
+        private void btnFlickr_Click(object sender, EventArgs e)
+        {
+            _FolderSearch = false;
+            tbFlickrQuery.Visible = true;
+            btnSearchFlickr.Visible = true;
+        }
+
+        private void btnFolder_Click(object sender, EventArgs e)
+        {
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                _SourceFolderPath = fbd.SelectedPath;
+                _FolderSearch = true;
+                tbFlickrQuery.Visible = false;
+                btnSearchFlickr.Visible = false;
+            }
         }
     }
 }

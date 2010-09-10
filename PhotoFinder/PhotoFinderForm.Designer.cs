@@ -49,6 +49,9 @@
             this.pSort = new System.Windows.Forms.Panel();
             this.rbDesc = new System.Windows.Forms.RadioButton();
             this.rbAsc = new System.Windows.Forms.RadioButton();
+            this.btnFolder = new System.Windows.Forms.Button();
+            this.btnFlickr = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
             this.tcSearch.SuspendLayout();
             this.tpImgSearch.SuspendLayout();
             this.tpSaveBox.SuspendLayout();
@@ -230,6 +233,7 @@
             this.tbFlickrQuery.Name = "tbFlickrQuery";
             this.tbFlickrQuery.Size = new System.Drawing.Size(242, 20);
             this.tbFlickrQuery.TabIndex = 7;
+            this.tbFlickrQuery.Visible = false;
             this.tbFlickrQuery.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tbFlickrQuery_KeyUp);
             // 
             // btnSearchFlickr
@@ -240,6 +244,7 @@
             this.btnSearchFlickr.TabIndex = 8;
             this.btnSearchFlickr.Text = "Index Flickr";
             this.btnSearchFlickr.UseVisualStyleBackColor = true;
+            this.btnSearchFlickr.Visible = false;
             this.btnSearchFlickr.Click += new System.EventHandler(this.btnSearchFlickr_Click);
             // 
             // cbxSort
@@ -296,11 +301,43 @@
             this.rbAsc.UseVisualStyleBackColor = true;
             this.rbAsc.CheckedChanged += new System.EventHandler(this.rbAsc_CheckedChanged);
             // 
+            // btnFolder
+            // 
+            this.btnFolder.Location = new System.Drawing.Point(76, 1);
+            this.btnFolder.Name = "btnFolder";
+            this.btnFolder.Size = new System.Drawing.Size(75, 23);
+            this.btnFolder.TabIndex = 12;
+            this.btnFolder.Text = "Folder";
+            this.btnFolder.UseVisualStyleBackColor = true;
+            this.btnFolder.Click += new System.EventHandler(this.btnFolder_Click);
+            // 
+            // btnFlickr
+            // 
+            this.btnFlickr.Location = new System.Drawing.Point(157, 1);
+            this.btnFlickr.Name = "btnFlickr";
+            this.btnFlickr.Size = new System.Drawing.Size(75, 23);
+            this.btnFlickr.TabIndex = 13;
+            this.btnFlickr.Text = "Flickr";
+            this.btnFlickr.UseVisualStyleBackColor = true;
+            this.btnFlickr.Click += new System.EventHandler(this.btnFlickr_Click);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(13, 6);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(58, 13);
+            this.label3.TabIndex = 14;
+            this.label3.Text = "Search in: ";
+            // 
             // PhotoFinderForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1045, 480);
+            this.Controls.Add(this.label3);
+            this.Controls.Add(this.btnFlickr);
+            this.Controls.Add(this.btnFolder);
             this.Controls.Add(this.pSort);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbxSort);
@@ -352,6 +389,9 @@
         private System.Windows.Forms.Panel pSort;
         private System.Windows.Forms.RadioButton rbDesc;
         private System.Windows.Forms.RadioButton rbAsc;
+        private System.Windows.Forms.Button btnFolder;
+        private System.Windows.Forms.Button btnFlickr;
+        private System.Windows.Forms.Label label3;
     }
 }
 
